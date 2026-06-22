@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>MM-Veikkaus '26</title>
+
+<!-- ===================================================================== -->
+<!--  FIREBASE-ASETUKSET — KORVAA NÄMÄ OMILLA (ks. README, vaihe 3)        -->
+<!-- ===================================================================== -->
+<script>
+  window.FIREBASE_CONFIG = {
+    apiKey: "AIzaSyALuqqZIdg9lhHb3FK6E8PCywZI83Cg0zg",
+    authDomain: "mm-veikkaus-koe.firebaseapp.com",
+    projectId: "mm-veikkaus-koe",
+    storageBucket: "mm-veikkaus-koe.firebasestorage.app",
+    messagingSenderId: "931149266333",
+    appId: "1:931149266333:web:a50e1afa7563a18ced4374"
+  };
+</script>
+<!-- ===================================================================== -->
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.7/babel.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Spline+Sans+Mono:wght@500;600&display=swap');
+@font-face{font-family:'Twemoji Country Flags';unicode-range:U+1F1E6-1F1FF,U+1F3F4,U+E0062-E0063,U+E0065,U+E0067,U+E006C,U+E006E,U+E0073-E0074,U+E0077,U+E007F;src:url('https://cdn.jsdelivr.net/npm/country-flag-emoji-polyfill@0.1/dist/TwemojiCountryFlags.woff2') format('woff2');font-display:swap}
+:root{
+  --bg:#0a1020; --panel:#101d33; --panel2:#0c1727; --line:#22324f;
+  --ink:#eaf1ff; --mut:#8aa0c4; --grn:#39e57c; --grn2:#1f7d49;
+  --amb:#ffcf3f; --amb2:#a9851a; --red:#ff5d52; --teal:#9be8b7; --grey:#6e7c76;
+  --alive:#16263f;
+  --navy:#143a63; --blue:#2b34db; --blue2:#6f8cff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Twemoji Country Flags','Hanken Grotesk',sans-serif;color:var(--ink);
+  background:radial-gradient(1000px 520px at 85% -12%,#16294d 0,transparent 55%),
+  radial-gradient(900px 500px at -10% 110%,#0f2142 0,transparent 55%),var(--bg);min-height:100vh;line-height:1.45;}
+.mono{font-family:'Spline Sans Mono',monospace}
+h1,h2,.disp{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:.02em;text-transform:uppercase}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px 90px}
+.hero{background:linear-gradient(115deg,#102a52 0%,var(--blue) 100%);border:1px solid #2b3a7a;border-radius:18px;padding:18px 20px;margin:14px 0 6px}
+.herorow{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hero .logo{height:72px;width:auto;flex:0 0 auto;filter:drop-shadow(0 3px 8px rgba(0,0,0,.45))}
+.hero .htxt{flex:1 1 240px;min-width:0}
+.kick{color:#cdd8ff;font-weight:800;letter-spacing:.18em;font-size:11px;text-transform:uppercase}
+.title{font-size:clamp(30px,6.5vw,54px);line-height:.92;margin:4px 0 2px;color:#fff}
+.title em{font-style:normal;color:#fff}
+.sub{color:#cdd8ff;font-size:13px;max-width:600px;margin:5px 0 0}
+.countdown{display:flex;gap:7px;flex:0 0 auto}
+.cdbox{background:rgba(255,255,255,.12);border-radius:10px;padding:7px 10px;text-align:center;min-width:44px}
+.cdnum{font-family:'Spline Sans Mono',monospace;color:#fff;font-size:20px;font-weight:600;line-height:1}
+.cdlab{color:#cdd8ff;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-top:3px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:20;
+  background:linear-gradient(var(--bg),rgba(10,16,32,.85));backdrop-filter:blur(8px);
+  padding:12px 0;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.tab{font-family:inherit;font-weight:700;font-size:14px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;color:var(--mut);cursor:pointer;transition:.15s}
+.tab:hover{color:var(--ink);border-color:var(--blue2)}
+.tab.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:3px;background:#0b1426}
+.segb{font-family:inherit;font-size:13px;font-weight:700;padding:6px 14px;border-radius:999px;color:var(--mut);border:none;background:transparent;cursor:pointer}
+.segb.on{background:var(--blue);color:#fff}
+.todaytag{font-size:10px;font-weight:800;color:#fff;background:var(--blue);border-radius:999px;padding:2px 9px;letter-spacing:.05em;margin-left:8px}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  border-radius:16px;padding:18px;margin:14px 0}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.wrapf{flex-wrap:wrap}
+.lab{color:var(--mut);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.tiny{font-size:12px;color:var(--mut)}
+input,select{font-family:inherit;font-size:15px;color:var(--ink);background:#0b1426;
+  border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none}
+input:focus,select:focus{border-color:var(--blue2)}
+.sc{width:46px;text-align:center;font-family:'Spline Sans Mono',monospace;font-size:17px;padding:8px 4px}
+button.act{font-family:inherit;font-weight:800;background:var(--grn);color:#04150c;border:none;border-radius:11px;padding:11px 18px;cursor:pointer;font-size:15px}
+button.act:hover{filter:brightness(1.08)}
+button.act:disabled{opacity:.5;cursor:not-allowed}
+button.ghost{font-family:inherit;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:11px;padding:9px 15px;cursor:pointer;font-weight:700}
+button.ghost:hover{border-color:var(--grn)}
+.note{font-size:13px;color:var(--mut);background:rgba(111,140,255,.06);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0}
+.warn{color:var(--amb)}
+.err{color:var(--red)}
+.divider{height:1px;background:var(--line);margin:14px 0}
+.section-h{font-size:13px;color:var(--blue2);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:14px 0 4px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.match{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:11px 0;border-bottom:1px dashed var(--line)}
+.match:last-child{border-bottom:none}
+.tm{font-weight:700;font-size:15px}.tm.r{text-align:right}
+.pill{font-size:11px;font-weight:800;padding:2px 7px;border-radius:999px}
+.pill.g{background:rgba(57,229,124,.16);color:var(--grn)}
+.pill.g2{background:rgba(56,200,232,.18);color:#4fd0ec}
+.pill.y{background:rgba(255,207,63,.16);color:var(--amb)}
+.pill.z{background:rgba(255,93,82,.13);color:var(--red)}
+.pill.dbl{background:rgba(255,207,63,.18);color:var(--amb);border:1px solid var(--amb2)}
+.kpi{font-family:'Anton';font-size:30px;line-height:1}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.statline{display:grid;grid-template-columns:1fr repeat(5,52px);gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line)}
+.statline.head{color:var(--mut);font-size:11px;font-weight:800;text-transform:uppercase}
+.statline input{width:100%;padding:6px;text-align:center}
+
+/* ---- pelaaja/maa-solu ---- */
+.cellbox{background:var(--alive);border-radius:10px;padding:8px 10px;min-height:52px}
+.cellbox.out{background:#161a26}
+.cellbox .nm{font-weight:700;font-size:15px}
+.cellbox.out .nm{color:var(--mut)}
+.cellbox .pts{font-family:'Spline Sans Mono';font-size:12px;color:var(--teal);font-weight:600}
+.cellbox.out .pts{color:var(--grey)}
+.flag{margin-right:0;display:inline-flex;align-items:center;vertical-align:middle}
+.flagimg{width:22px;height:16px;object-fit:cover;border-radius:3px;margin-right:6px;vertical-align:-3px;box-shadow:0 0 0 1px rgba(255,255,255,.1);background:#0b1426}
+
+/* ---- kärkitaulu: leveä pöytä ---- */
+.lb-wide{display:none}
+.lb-cards{display:block}
+@media(min-width:880px){ .lb-wide{display:block} .lb-cards{display:none} }
+.lbtable{width:100%;border-collapse:separate;border-spacing:0 0}
+.lbtable th{color:var(--mut);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;text-align:left;padding:8px 8px}
+.lbtable td{padding:8px 8px;border-top:1px solid var(--line);vertical-align:middle}
+.lbtable tr.top td:first-child{box-shadow:inset 3px 0 0 var(--grn)}
+.rank{font-family:'Anton';font-size:20px;color:var(--grn)}
+.rank.gold{color:var(--amb)}
+.nm-tot{display:flex;flex-direction:column}
+.tot{font-family:'Spline Sans Mono';font-weight:600;font-size:20px}
+
+/* ---- kärkitaulu: kortit ---- */
+.pcard{border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--panel),var(--panel2));padding:14px;margin:12px 0;position:relative;overflow:hidden}
+.pcard.top{border-color:#2b3a7a}
+.pcard .bar{position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--blue)}
+.pcard .hd{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.prow{display:grid;grid-template-columns:96px 1fr auto;gap:8px;align-items:center;padding:7px 6px;margin-top:8px;border-radius:10px;background:var(--alive)}
+.prow.out{background:#161a26}
+.prow .poslab{font-size:11px;font-weight:800;color:var(--mut);text-transform:uppercase}
+.prow.champ .poslab{color:var(--amb)}
+.chev{color:var(--grn);font-weight:800;font-size:16px;margin-left:6px}
+.liverow{padding:9px 0;border-bottom:1px dashed var(--line)}.liverow:last-child{border-bottom:none}
+.predchip{display:inline-flex;gap:5px;align-items:center;background:#11213a;border:1px solid var(--line);border-radius:9px;padding:3px 8px;font-size:12px;font-weight:700}
+.predchip .s{font-family:'Spline Sans Mono';color:var(--teal);font-weight:600}
+.morechip{background:rgba(57,229,124,.12);border:1px solid var(--grn);color:var(--grn);border-radius:9px;padding:4px 10px;font-size:12px;font-weight:800;cursor:pointer}
+.chd{display:grid;grid-template-columns:auto auto 1fr auto;gap:10px;align-items:center}
+.cflag{font-size:22px;line-height:1}
+.cname{font-weight:800;font-size:18px;display:inline-flex;align-items:center;gap:6px;min-width:0}
+.nmcol{min-width:0}
+.jrow{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.jpill{background:#0c1a2c;border-radius:10px;padding:5px 12px;font-weight:700;font-size:13px;color:var(--blue2)}
+.medal{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#1a1400;flex:0 0 auto}
+.medal.g{background:#f5c43a}.medal.s{background:#c4cad2}.medal.b{background:#c48048}
+.potbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin:14px 0}
+.pottot{font-family:'Anton';font-size:26px;color:#f5c43a;line-height:1}
+.tiers{display:flex;gap:8px;flex-wrap:wrap}
+.tier{display:flex;align-items:center;gap:8px;background:var(--alive);border-radius:10px;padding:8px 12px}
+.teur{font-family:'Spline Sans Mono';font-weight:700;font-size:15px}
+.livewrap{display:block}
+@media(min-width:880px){.livewrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}.livewrap>.card{margin:14px 0 0}}
+/* ---- tallennusvahvistus (toast) ---- */
+.toastwrap{position:fixed;left:0;right:0;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:9999;pointer-events:none;padding:0 12px}
+.toast{background:var(--grn);color:#04150c;font-weight:800;font-size:15px;padding:12px 22px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.45);max-width:92vw;text-align:center;
+  animation:toastin .22s ease-out, toastout .4s ease-in 1.8s forwards}
+.toast.err{background:var(--red);color:#2a0a08}
+@keyframes toastin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes toastout{to{opacity:0;transform:translateY(14px)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo, useCallback, Fragment } = React;
+
+/* ===================== TALLENNUSVAHVISTUS (TOAST) ===================== */
+let toastListeners=[];
+function toast(text,kind){ toastListeners.forEach(fn=>fn(text,kind)); }
+function Toast(){
+  const [items,setItems]=useState([]);
+  useEffect(()=>{
+    const fn=(text,kind)=>{ const id=Date.now()+"_"+Math.random();
+      setItems(a=>[...a,{id,text,kind:kind||""}]);
+      setTimeout(()=>setItems(a=>a.filter(x=>x.id!==id)),2200);
+    };
+    toastListeners.push(fn);
+    return ()=>{ toastListeners=toastListeners.filter(f=>f!==fn); };
+  },[]);
+  if(items.length===0) return null;
+  return <div className="toastwrap">{items.map(t=><div key={t.id} className={"toast"+(t.kind==="err"?" err":"")}>{t.text}</div>)}</div>;
+}
+
+/* ===================== DATA ===================== */
+const GROUPS = {
+  A:["Meksiko","Etelä-Afrikka","Etelä-Korea","Tšekki"],
+  B:["Kanada","Bosnia-Hertsegovina","Qatar","Sveitsi"],
+  C:["Brasilia","Marokko","Haiti","Skotlanti"],
+  D:["Yhdysvallat","Paraguay","Australia","Turkki"],
+  E:["Saksa","Curaçao","Norsunluurannikko","Ecuador"],
+  F:["Alankomaat","Japani","Ruotsi","Tunisia"],
+  G:["Belgia","Egypti","Iran","Uusi-Seelanti"],
+  H:["Espanja","Kap Verde","Saudi-Arabia","Uruguay"],
+  I:["Ranska","Senegal","Irak","Norja"],
+  J:["Argentiina","Algeria","Itävalta","Jordania"],
+  K:["Portugali","Kongon dem. tasavalta","Uzbekistan","Kolumbia"],
+  L:["Englanti","Kroatia","Ghana","Panama"],
+};
+const ALL_TEAMS = Object.values(GROUPS).flat().sort((a,b)=>a.localeCompare(b,"fi"));
+const ISO = {"Meksiko":"MX","Etelä-Afrikka":"ZA","Etelä-Korea":"KR","Tšekki":"CZ","Kanada":"CA","Bosnia-Hertsegovina":"BA","Qatar":"QA","Sveitsi":"CH","Brasilia":"BR","Marokko":"MA","Haiti":"HT","Yhdysvallat":"US","Paraguay":"PY","Australia":"AU","Turkki":"TR","Saksa":"DE","Curaçao":"CW","Norsunluurannikko":"CI","Ecuador":"EC","Alankomaat":"NL","Japani":"JP","Ruotsi":"SE","Tunisia":"TN","Belgia":"BE","Egypti":"EG","Iran":"IR","Uusi-Seelanti":"NZ","Espanja":"ES","Kap Verde":"CV","Saudi-Arabia":"SA","Uruguay":"UY","Ranska":"FR","Senegal":"SN","Irak":"IQ","Norja":"NO","Argentiina":"AR","Algeria":"DZ","Itävalta":"AT","Jordania":"JO","Portugali":"PT","Kongon dem. tasavalta":"CD","Uzbekistan":"UZ","Kolumbia":"CO","Kroatia":"HR","Ghana":"GH","Panama":"PA"};
+const FLAG_SUB = {"Englanti":"gb-eng","Skotlanti":"gb-sct"};
+function flagCode(team){ if(FLAG_SUB[team]) return FLAG_SUB[team]; const cc=ISO[team]; return cc?cc.toLowerCase():null; }
+function flag(team){ if(!team) return null; const code=flagCode(team); if(!code) return null;
+  return <img className="flagimg" src={"https://flagcdn.com/24x18/"+code+".png"} srcSet={"https://flagcdn.com/48x36/"+code+".png 2x"} alt="" loading="lazy" onError={e=>{e.currentTarget.style.display="none";}}/>; }
+
+/* ===================== PELAAJATIETOKANTA =====================
+   Täytä lopullisten kokoonpanojen julkaisun jälkeen (2.6.2026).
+   Muoto: SQUADS["Maa"] = [ {n:"Pelaajan nimi", pos:"MV"|"P"|"KK"|"H"}, ... ]
+   Kun maalle on lista, veikkaus näyttää pelaajavalikon; muuten vapaa tekstikenttä. */
+const SQUADS = {
+  "Meksiko":[{n:"Raul Rangel",pos:"MV"},{n:"Jorge Sanchez",pos:"P"},{n:"Cesar Montes",pos:"P"},{n:"Edson Alvarez",pos:"P"},{n:"Johan Vasquez",pos:"P"},{n:"Erik Lira",pos:"KK"},{n:"Luis Romo",pos:"KK"},{n:"Alvaro Fidalgo",pos:"KK"},{n:"Raul Jimenez",pos:"H"},{n:"Alexis Vega",pos:"H"},{n:"Santiago Gimenez",pos:"H"},{n:"Carlos Acevedo",pos:"MV"},{n:"Guillermo Ochoa",pos:"MV"},{n:"Armando Gonzalez",pos:"H"},{n:"Israel Reyes",pos:"P"},{n:"Julian Quinones",pos:"H"},{n:"Orbelin Pineda",pos:"KK"},{n:"Obed Vargas",pos:"KK"},{n:"Gilberto Mora",pos:"KK"},{n:"Mateo Chavez",pos:"P"},{n:"Cesar Huerta",pos:"H"},{n:"Guillermo Martinez",pos:"H"},{n:"Jesus Gallardo",pos:"P"},{n:"Luis Chavez",pos:"KK"},{n:"Roberto Alvarado",pos:"H"},{n:"Brian Gutierrez",pos:"KK"}],
+  "Etelä-Afrikka":[{n:"Ronwen Williams",pos:"MV"},{n:"Thabang Matuludi",pos:"P"},{n:"Khulumani Ndamane",pos:"P"},{n:"Teboho Mokoena",pos:"KK"},{n:"Thalente Mbatha",pos:"KK"},{n:"Aubrey Modiba",pos:"P"},{n:"Oswin Appollis",pos:"H"},{n:"Tshepang Moremi",pos:"H"},{n:"Lyle Foster",pos:"H"},{n:"Relebohile Mofokeng",pos:"H"},{n:"Themba Zwane",pos:"KK"},{n:"Thapelo Maseko",pos:"H"},{n:"Sphephelo Sithole",pos:"KK"},{n:"Mbekezeli Mbokazi",pos:"P"},{n:"Iqraam Rayners",pos:"H"},{n:"Sipho Chaine",pos:"MV"},{n:"Evidence Makgopa",pos:"H"},{n:"Samukelo Kabini",pos:"P"},{n:"Nkosinathi Sibisi",pos:"P"},{n:"Khuliso Mudau",pos:"P"},{n:"Ime Okon",pos:"P"},{n:"Ricardo Goss",pos:"MV"},{n:"Jayden Adams",pos:"KK"},{n:"Olwethu Makhanya",pos:"P"},{n:"Kamogelo Sebelebele",pos:"H"},{n:"Bradley Cross",pos:"P"}],
+  "Etelä-Korea":[{n:"Seunggyu Kim",pos:"MV"},{n:"Hanbeom Lee",pos:"P"},{n:"Gihyuk Lee",pos:"KK"},{n:"Minjae Kim",pos:"P"},{n:"Taehyeon Kim",pos:"P"},{n:"Inbeom Hwang",pos:"KK"},{n:"Heungmin Son",pos:"H"},{n:"Seungho Paik",pos:"KK"},{n:"Guesung Cho",pos:"H"},{n:"Jaesung Lee",pos:"KK"},{n:"Heechan Hwang",pos:"KK"},{n:"Bumkeun Song",pos:"MV"},{n:"Taeseok Lee",pos:"P"},{n:"Wije Cho",pos:"P"},{n:"Moonhwan Kim",pos:"P"},{n:"Jinseob Park",pos:"P"},{n:"Junho Bae",pos:"KK"},{n:"Hyeongyu Oh",pos:"H"},{n:"Kangin Lee",pos:"KK"},{n:"Hyunjun Yang",pos:"KK"},{n:"Hyeonwoo Jo",pos:"MV"},{n:"Youngwoo Seol",pos:"P"},{n:"Jens Castrop",pos:"P"},{n:"Jingyu Kim",pos:"KK"},{n:"Jisung Eom",pos:"KK"},{n:"Donggyeong Lee",pos:"KK"}],
+  "Tšekki":[{n:"Matej Kovar",pos:"MV"},{n:"David Zima",pos:"P"},{n:"Tomas Holes",pos:"P"},{n:"Robin Hranac",pos:"P"},{n:"Vladimir Coufal",pos:"P"},{n:"Stepan Chaloupek",pos:"P"},{n:"Ladislav Krejci",pos:"P"},{n:"Vladimir Darida",pos:"KK"},{n:"Adam Hlozek",pos:"H"},{n:"Patrik Schick",pos:"H"},{n:"Jan Kuchta",pos:"H"},{n:"Lukas Cerv",pos:"KK"},{n:"Mojmir Chytil",pos:"H"},{n:"David Jurasek",pos:"P"},{n:"Pavel Sulc",pos:"H"},{n:"Jindrich Stanek",pos:"MV"},{n:"Lukas Provod",pos:"KK"},{n:"Michal Sadilek",pos:"KK"},{n:"Tomas Chory",pos:"H"},{n:"Jaroslav Zeleny",pos:"P"},{n:"David Doudera",pos:"P"},{n:"Tomas Soucek",pos:"KK"},{n:"Lukas Hornicek",pos:"MV"},{n:"Alexandr Sojka",pos:"KK"},{n:"Hugo Sochurek",pos:"KK"},{n:"Denis Visinsky",pos:"H"}],
+  "Kanada":[{n:"Dayne St. Clair",pos:"MV"},{n:"Alistair Johnston",pos:"P"},{n:"Alfie Jones",pos:"P"},{n:"Luc De Fougerolles",pos:"P"},{n:"Joel Waterman",pos:"P"},{n:"Mathieu Choiniere",pos:"KK"},{n:"Stephen Eustaquio",pos:"KK"},{n:"Ismael Kone",pos:"KK"},{n:"Cyle Larin",pos:"H"},{n:"Jonathan David",pos:"H"},{n:"Liam Millar",pos:"KK"},{n:"Tani Oluwaseyi",pos:"H"},{n:"Derek Cornelius",pos:"P"},{n:"Jacob Shaffelburg",pos:"KK"},{n:"Moise Bombito",pos:"P"},{n:"Maxime Crepeau",pos:"MV"},{n:"Tajon Buchanan",pos:"H"},{n:"Owen Goodman",pos:"MV"},{n:"Alphonso Davies",pos:"P"},{n:"Ali Ahmed",pos:"H"},{n:"Jonathan Osorio",pos:"KK"},{n:"Richie Laryea",pos:"P"},{n:"Niko Sigur",pos:"P"},{n:"Promise David",pos:"H"},{n:"Nathan Saliba",pos:"KK"},{n:"Marcelo Flores",pos:"KK"}],
+  "Bosnia-Hertsegovina":[{n:"Nikola Vasilj",pos:"MV"},{n:"Nihad Mujakic",pos:"P"},{n:"Dennis Hadzikadunic",pos:"P"},{n:"Tarik Muharemovic",pos:"P"},{n:"Sead Kolasinac",pos:"P"},{n:"Benjamin Tahirovic",pos:"KK"},{n:"Amar Dedic",pos:"P"},{n:"Armin Gigovic",pos:"KK"},{n:"Samed Bazdar",pos:"H"},{n:"Ermedin Demirovic",pos:"H"},{n:"Edin Dzeko",pos:"H"},{n:"Mladen Jurkas",pos:"MV"},{n:"Ivan Basic",pos:"KK"},{n:"Ivan Sunjic",pos:"KK"},{n:"Amar Memic",pos:"KK"},{n:"Amir Hadziahmetovic",pos:"KK"},{n:"Dzenis Burnic",pos:"KK"},{n:"Nikola Katic",pos:"P"},{n:"Kerim Alajbegovic",pos:"H"},{n:"Esmir Bajraktarevic",pos:"H"},{n:"Stjepan Radeljic",pos:"P"},{n:"Martin Zlomislic",pos:"MV"},{n:"Haris Tabakovic",pos:"H"},{n:"Nidal Celik",pos:"P"},{n:"Jovo Lukic",pos:"H"},{n:"Ermin Mahmic",pos:"KK"}],
+  "Qatar":[{n:"Mahmoud Abunada",pos:"MV"},{n:"Pedro Miguel",pos:"P"},{n:"Lucas Mendes",pos:"P"},{n:"Issa Laye",pos:"P"},{n:"Jassem Gaber",pos:"P"},{n:"Abdulaziz Hatem",pos:"KK"},{n:"Ahmed Alaaeldin",pos:"H"},{n:"Edmilson Junior",pos:"H"},{n:"Mohammed Muntari",pos:"H"},{n:"Hassan Alhaydos",pos:"H"},{n:"Akram Afif",pos:"H"},{n:"Karim Boudiaf",pos:"KK"},{n:"Ayoub Aloui",pos:"P"},{n:"Homam Ahmed",pos:"P"},{n:"Yusuf Abdurisag",pos:"H"},{n:"Boualem Khoukhi",pos:"P"},{n:"Ahmed Alganehi",pos:"KK"},{n:"Sultan Albrake",pos:"P"},{n:"Almoez Ali",pos:"H"},{n:"Ahmed Fathy",pos:"KK"},{n:"Salah Zakaria",pos:"MV"},{n:"Meshaal Barsham",pos:"MV"},{n:"Assim Madibo",pos:"KK"},{n:"Tahsin Jamshid",pos:"H"},{n:"Alhashmi Alhussein",pos:"P"},{n:"Mohamed Manai",pos:"H"}],
+  "Sveitsi":[{n:"Gregor Kobel",pos:"MV"},{n:"Miro Muheim",pos:"P"},{n:"Silvan Widmer",pos:"P"},{n:"Nico Elvedi",pos:"P"},{n:"Manuel Akanji",pos:"P"},{n:"Denis Zakaria",pos:"KK"},{n:"Breel Embolo",pos:"H"},{n:"Remo Freuler",pos:"KK"},{n:"Johan Manzambi",pos:"KK"},{n:"Granit Xhaka",pos:"KK"},{n:"Dan Ndoye",pos:"H"},{n:"Yvon Mvogo",pos:"MV"},{n:"Ricardo Rodriguez",pos:"P"},{n:"Ardon Jashari",pos:"KK"},{n:"Djibril Sow",pos:"KK"},{n:"Christian Fassnacht",pos:"H"},{n:"Ruben Vargas",pos:"H"},{n:"Eray Coemert",pos:"P"},{n:"Noah Okafor",pos:"H"},{n:"Michel Aebischer",pos:"KK"},{n:"Marvin Keller",pos:"MV"},{n:"Fabian Rieder",pos:"KK"},{n:"Zeki Amdouni",pos:"H"},{n:"Aurele Amenda",pos:"P"},{n:"Luca Jaquez",pos:"P"},{n:"Cedric Itten",pos:"H"}],
+  "Brasilia":[{n:"Alisson",pos:"MV"},{n:"Wesley",pos:"P"},{n:"Gabriel Magalhaes",pos:"P"},{n:"Marquinhos",pos:"P"},{n:"Casemiro",pos:"KK"},{n:"Alex Sandro",pos:"P"},{n:"Vinicius Junior",pos:"H"},{n:"Bruno Guimaraes",pos:"KK"},{n:"Matheus Cunha",pos:"H"},{n:"Neymar Jr",pos:"H"},{n:"Raphinha",pos:"H"},{n:"Weverton",pos:"MV"},{n:"Danilo",pos:"P"},{n:"Bremer",pos:"P"},{n:"Leo Pereira",pos:"P"},{n:"Douglas Santos",pos:"P"},{n:"Fabinho",pos:"KK"},{n:"Danilo Santos",pos:"KK"},{n:"Endrick",pos:"H"},{n:"Lucas Paqueta",pos:"KK"},{n:"Luiz Henrique",pos:"H"},{n:"Gabriel Martinelli",pos:"H"},{n:"Ederson",pos:"MV"},{n:"Roger Ibanez",pos:"P"},{n:"Igor Thiago",pos:"H"},{n:"Rayan",pos:"H"}],
+  "Marokko":[{n:"Yassine Bounou",pos:"MV"},{n:"Achraf Hakimi",pos:"P"},{n:"Noussair Mazraoui",pos:"P"},{n:"Sofyan Amrabat",pos:"KK"},{n:"Nayef Aguerd",pos:"P"},{n:"Ayyoub Bouaddi",pos:"KK"},{n:"Chemsdine Talbi",pos:"KK"},{n:"Azzedine Ounahi",pos:"KK"},{n:"Soufiane Rahimi",pos:"H"},{n:"Brahim Diaz",pos:"H"},{n:"Ismael Saibari",pos:"KK"},{n:"Munir El Kajoui",pos:"MV"},{n:"Zakaria El Ouahdi",pos:"P"},{n:"Issa Diop",pos:"P"},{n:"Samir El Mourabet",pos:"KK"},{n:"Gessime Yassine",pos:"KK"},{n:"Abde Ezzalzouli",pos:"H"},{n:"Chadi Riad",pos:"P"},{n:"Youssef Belammari",pos:"P"},{n:"Ayoub El Kaabi",pos:"H"},{n:"Ayoub Amaimouni",pos:"H"},{n:"Ahmed Tagnaouti",pos:"MV"},{n:"Bilal El Khannouss",pos:"KK"},{n:"Neil El Aynaoui",pos:"KK"},{n:"Redouane Halhal",pos:"P"},{n:"Anass Salah Eddine",pos:"P"}],
+  "Haiti":[{n:"Johny Placide",pos:"MV"},{n:"Carlens Arcus",pos:"P"},{n:"Keeto Thermoncy",pos:"P"},{n:"Ricardo Ade",pos:"P"},{n:"Hannes Delcroix",pos:"P"},{n:"Carl Sainte",pos:"KK"},{n:"Derrick Etienne",pos:"H"},{n:"Martin Experience",pos:"P"},{n:"Duckens Nazon",pos:"H"},{n:"Jean-Ricner Bellegarde",pos:"KK"},{n:"Louicius Deedson",pos:"H"},{n:"Alexandre Pierre",pos:"MV"},{n:"Markhus Lacroix",pos:"P"},{n:"Leverton Pierre",pos:"KK"},{n:"Ruben Providence",pos:"H"},{n:"Lenny Joseph",pos:"H"},{n:"Danley Jean Jacques",pos:"KK"},{n:"Wilson Isidor",pos:"H"},{n:"Yassin Fortune",pos:"H"},{n:"Frantzdy Pierrot",pos:"H"},{n:"Josue Casimir",pos:"H"},{n:"Jean-Kevin Duverne",pos:"P"},{n:"Josue Duverger",pos:"MV"},{n:"Wilguens Paugain",pos:"P"},{n:"Dominique Simon",pos:"KK"},{n:"Woodensky Pierre",pos:"KK"}],
+  "Skotlanti":[{n:"Angus Gunn",pos:"MV"},{n:"Aaron Hickey",pos:"P"},{n:"Andy Robertson",pos:"P"},{n:"McTOMINAY",pos:"KK"},{n:"Grant Hanley",pos:"P"},{n:"Kieran Tierney",pos:"P"},{n:"McGINN",pos:"KK"},{n:"Tyler Fletcher",pos:"KK"},{n:"Lyndon Dykes",pos:"H"},{n:"Che Adams",pos:"H"},{n:"Ryan Christie",pos:"KK"},{n:"Liam Kelly",pos:"MV"},{n:"Jack Hendry",pos:"P"},{n:"Ross Stewart",pos:"H"},{n:"John Souttar",pos:"P"},{n:"Dominic Hyam",pos:"P"},{n:"Ben Gannon-Doak",pos:"H"},{n:"George Hirst",pos:"H"},{n:"Lewis Ferguson",pos:"KK"},{n:"Lawrence Shankland",pos:"H"},{n:"Craig Gordon",pos:"MV"},{n:"Nathan Patterson",pos:"P"},{n:"McLEAN",pos:"KK"},{n:"Anthony Ralston",pos:"P"},{n:"Findlay Curtis",pos:"H"},{n:"McKENNA",pos:"P"}],
+  "Yhdysvallat":[{n:"Matt Turner",pos:"MV"},{n:"Sergino Dest",pos:"P"},{n:"Chris Richards",pos:"P"},{n:"Tyler Adams",pos:"KK"},{n:"Antonee Robinson",pos:"P"},{n:"Auston Trusty",pos:"P"},{n:"Giovanni Reyna",pos:"KK"},{n:"McKENNIE",pos:"KK"},{n:"Ricardo Pepi",pos:"H"},{n:"Christian Pulisic",pos:"H"},{n:"Brenden Aaronson",pos:"H"},{n:"Miles Robinson",pos:"P"},{n:"Tim Ream",pos:"P"},{n:"Sebastian Berhalter",pos:"KK"},{n:"Cristian Roldan",pos:"KK"},{n:"Alex Freeman",pos:"P"},{n:"Malik Tillman",pos:"KK"},{n:"Max Arfsten",pos:"P"},{n:"Haji Wright",pos:"H"},{n:"Folarin Balogun",pos:"H"},{n:"Timothy Weah",pos:"H"},{n:"McKENZIE",pos:"P"},{n:"Joe Scally",pos:"P"},{n:"Matt Freese",pos:"MV"},{n:"Chris Brady",pos:"MV"},{n:"Alex Zendejas",pos:"H"}],
+  "Paraguay":[{n:"Gatito Fernandez",pos:"MV"},{n:"Gustavo Velazquez",pos:"P"},{n:"Omar Alderete",pos:"P"},{n:"Juan Caceres",pos:"P"},{n:"Fabian Balbuena",pos:"P"},{n:"Junior Alonso",pos:"P"},{n:"Ramon Sosa",pos:"KK"},{n:"Diego Gomez",pos:"KK"},{n:"Antonio Sanabria",pos:"H"},{n:"Miguel Almiron",pos:"KK"},{n:"Mauricio",pos:"KK"},{n:"Orlando Gill",pos:"MV"},{n:"Jose Canale",pos:"P"},{n:"Andres Cubas",pos:"KK"},{n:"Gustavo Gomez",pos:"P"},{n:"Damian Bobadilla",pos:"KK"},{n:"Alejandro Romero Gamarra",pos:"H"},{n:"Alex Arce",pos:"H"},{n:"Julio Enciso",pos:"H"},{n:"Braian Ojeda",pos:"KK"},{n:"Gabriel Avalos",pos:"H"},{n:"Gaston Olveira",pos:"MV"},{n:"Matias Galarza",pos:"KK"},{n:"Gustavo Caballero",pos:"KK"},{n:"Isidro Pitta",pos:"H"},{n:"Alexandro Maidana",pos:"P"}],
+  "Australia":[{n:"Mathew Ryan",pos:"MV"},{n:"Milos Degenek",pos:"P"},{n:"Alessandro Circati",pos:"P"},{n:"Jacob Italiano",pos:"P"},{n:"Jordan Bos",pos:"P"},{n:"Jason Geria",pos:"P"},{n:"Mathew Leckie",pos:"H"},{n:"Connor Metcalfe",pos:"KK"},{n:"Mohamed Toure",pos:"H"},{n:"Ajdin Hrustic",pos:"H"},{n:"Awer Mabil",pos:"H"},{n:"Paul Izzo",pos:"MV"},{n:"Aiden Oneill",pos:"KK"},{n:"Cameron Devlin",pos:"KK"},{n:"Kai Trewin",pos:"P"},{n:"Aziz Behich",pos:"P"},{n:"Nestory Irankunda",pos:"H"},{n:"Patrick Beach",pos:"MV"},{n:"Harry Souttar",pos:"P"},{n:"Cristian Volpato",pos:"H"},{n:"Cameron Burgess",pos:"P"},{n:"Jackson Irvine",pos:"KK"},{n:"Nishan Velupillay",pos:"H"},{n:"Paul Okon-Engstler",pos:"KK"},{n:"Lucas Herrington",pos:"P"},{n:"Tete Yengi",pos:"H"}],
+  "Turkki":[{n:"Mert Gunok",pos:"MV"},{n:"Zeki Celik",pos:"P"},{n:"Merih Demiral",pos:"P"},{n:"Caglar Soyuncu",pos:"P"},{n:"Salih Ozcan",pos:"KK"},{n:"Orkun Kokcu",pos:"KK"},{n:"Kerem Akturkoglu",pos:"H"},{n:"Arda Guler",pos:"H"},{n:"Deniz Gul",pos:"H"},{n:"Hakan Calhanoglu",pos:"KK"},{n:"Kenan Yildiz",pos:"H"},{n:"Altay Bayindir",pos:"MV"},{n:"Eren Elmali",pos:"P"},{n:"Abdulkerim Bardakci",pos:"P"},{n:"Ozan Kabak",pos:"P"},{n:"Ismail Yuksek",pos:"KK"},{n:"Irfan Kahveci",pos:"H"},{n:"Mert Muldur",pos:"P"},{n:"Yunus Akgun",pos:"H"},{n:"Ferdi Kadioglu",pos:"P"},{n:"Baris Yilmaz",pos:"H"},{n:"Kaan Ayhan",pos:"KK"},{n:"Ugurcan Cakir",pos:"MV"},{n:"Oguz Aydin",pos:"H"},{n:"Samet Akaydin",pos:"P"},{n:"Can Uzun",pos:"H"}],
+  "Saksa":[{n:"Manuel Neuer",pos:"MV"},{n:"Antonio Ruediger",pos:"P"},{n:"Waldemar Anton",pos:"P"},{n:"Jonathan Tah",pos:"P"},{n:"Aleksandar Pavlovic",pos:"KK"},{n:"Joshua Kimmich",pos:"P"},{n:"Kai Havertz",pos:"H"},{n:"Leon Goretzka",pos:"KK"},{n:"Jamie Leweling",pos:"KK"},{n:"Jamal Musiala",pos:"KK"},{n:"Nick Woltemade",pos:"H"},{n:"Oliver Baumann",pos:"MV"},{n:"Pascal Gross",pos:"KK"},{n:"Maximilian Beier",pos:"H"},{n:"Nico Schlotterbeck",pos:"P"},{n:"Angelo Stiller",pos:"KK"},{n:"Florian Wirtz",pos:"KK"},{n:"Nathaniel Brown",pos:"P"},{n:"Leroy Sane",pos:"KK"},{n:"Nadiem Amiri",pos:"KK"},{n:"Alexander Nuebel",pos:"MV"},{n:"David Raum",pos:"P"},{n:"Felix Nmecha",pos:"KK"},{n:"Malick Thiaw",pos:"P"},{n:"Lennart Karl",pos:"KK"},{n:"Deniz Undav",pos:"H"}],
+  "Curaçao":[{n:"Eloy Room",pos:"MV"},{n:"Shurandy Sambo",pos:"P"},{n:"Jurien Gaari",pos:"P"},{n:"Roshon Van Eijma",pos:"P"},{n:"Sherel Floranus",pos:"P"},{n:"Godfried Roemeratoe",pos:"KK"},{n:"Juninho Bacuna",pos:"KK"},{n:"Livano Comenencia",pos:"KK"},{n:"Juergen Locadia",pos:"H"},{n:"Leandro Bacuna",pos:"KK"},{n:"Jeremy Antonisse",pos:"H"},{n:"Sontje Hansen",pos:"H"},{n:"Tyrese Noslin",pos:"H"},{n:"Kenji Gorre",pos:"H"},{n:"Arjany Martha",pos:"KK"},{n:"Jearl Margaritha",pos:"H"},{n:"Brandley Kuwas",pos:"H"},{n:"Armando Obispo",pos:"P"},{n:"Gervane Kastaneer",pos:"H"},{n:"Joshua Brenet",pos:"P"},{n:"Tahith Chong",pos:"KK"},{n:"Kevin Felida",pos:"KK"},{n:"Riechedly Bazoer",pos:"P"},{n:"Deveron Fonville",pos:"P"},{n:"Tyrick Bodak",pos:"MV"},{n:"Trevor Doornbusch",pos:"MV"}],
+  "Norsunluurannikko":[{n:"Yahia Fofana",pos:"MV"},{n:"Ousmane Diomande",pos:"P"},{n:"Ghislain Konan",pos:"P"},{n:"Jean Seri",pos:"KK"},{n:"Wilfried Singo",pos:"P"},{n:"Seko Fofana",pos:"KK"},{n:"Odilon Kossounou",pos:"P"},{n:"Franck Kessie",pos:"KK"},{n:"Ange-Yoan Bonny",pos:"H"},{n:"Simon Adingra",pos:"H"},{n:"Yan Diomande",pos:"H"},{n:"Elye Wahi",pos:"H"},{n:"Christopher Operi",pos:"P"},{n:"Oumar Diakite",pos:"H"},{n:"Amad Diallo",pos:"H"},{n:"Mohamed Kone",pos:"MV"},{n:"Guela Doue",pos:"P"},{n:"Ibrahim Sangare",pos:"KK"},{n:"Nicolas Pepe",pos:"H"},{n:"Emmanuel Agbadou",pos:"P"},{n:"Evan Ndicka",pos:"P"},{n:"Evann Guessand",pos:"H"},{n:"Alban Lafont",pos:"MV"},{n:"Bazoumana Toure",pos:"H"},{n:"Parfait Guiagon",pos:"KK"},{n:"Christ Oulai",pos:"KK"}],
+  "Ecuador":[{n:"Hernan Galindez",pos:"MV"},{n:"Felix Torres",pos:"P"},{n:"Piero Hincapie",pos:"P"},{n:"Joel Ordonez",pos:"P"},{n:"Jordy Alcivar",pos:"KK"},{n:"Willian Pacho",pos:"P"},{n:"Pervis Estupinan",pos:"P"},{n:"Anthony Valencia",pos:"KK"},{n:"John Yeboah",pos:"H"},{n:"Kendry Paez",pos:"KK"},{n:"Kevin Rodriguez",pos:"H"},{n:"Moises Ramirez",pos:"MV"},{n:"Enner Valencia",pos:"H"},{n:"Alan Minda",pos:"KK"},{n:"Pedro Vite",pos:"KK"},{n:"Jordy Caicedo",pos:"H"},{n:"Angelo Preciado",pos:"P"},{n:"Denil Castillo",pos:"KK"},{n:"Gonzalo Plata",pos:"H"},{n:"Nilson Angulo",pos:"H"},{n:"Alan Franco",pos:"KK"},{n:"Gonzalo Valle",pos:"MV"},{n:"Moises Caicedo",pos:"KK"},{n:"Jeremy Arevalo",pos:"H"},{n:"Jackson Porozo",pos:"P"},{n:"Yaimar Medina",pos:"P"}],
+  "Alankomaat":[{n:"Bart Verbruggen",pos:"MV"},{n:"Jurrien Timber",pos:"P"},{n:"Marten De Roon",pos:"KK"},{n:"Virgil Van Dijk",pos:"P"},{n:"Nathan Ake",pos:"P"},{n:"Jan-Paul Van Hecke",pos:"P"},{n:"Justin Kluivert",pos:"KK"},{n:"Ryan Gravenberch",pos:"KK"},{n:"Wout Weghorst",pos:"H"},{n:"Memphis Depay",pos:"H"},{n:"Cody Gakpo",pos:"H"},{n:"Mats Wieffer",pos:"P"},{n:"Robin Roefs",pos:"MV"},{n:"Tijjani Reijnders",pos:"KK"},{n:"Micky Van De Ven",pos:"P"},{n:"Guus Til",pos:"KK"},{n:"Noa Lang",pos:"H"},{n:"Donyell Malen",pos:"H"},{n:"Brian Brobbey",pos:"H"},{n:"Teun Koopmeiners",pos:"KK"},{n:"Frenkie De Jong",pos:"KK"},{n:"Denzel Dumfries",pos:"P"},{n:"Mark Flekken",pos:"MV"},{n:"Crysencio Summerville",pos:"H"},{n:"Jorrel Hato",pos:"P"},{n:"Quinten Timber",pos:"KK"}],
+  "Japani":[{n:"Zion Suzuki",pos:"MV"},{n:"Yukinari Sugawara",pos:"P"},{n:"Shogo Taniguchi",pos:"P"},{n:"Kou Itakura",pos:"P"},{n:"Yuto Nagatomo",pos:"P"},{n:"Wataru Endo",pos:"KK"},{n:"Ao Tanaka",pos:"KK"},{n:"Takefusa Kubo",pos:"KK"},{n:"Keisuke Goto",pos:"H"},{n:"Ritsu Doan",pos:"KK"},{n:"Daizen Maeda",pos:"KK"},{n:"Keisuke Osako",pos:"MV"},{n:"Keito Nakamura",pos:"KK"},{n:"Junya Ito",pos:"KK"},{n:"Daichi Kamada",pos:"KK"},{n:"Tsuyoshi Watanabe",pos:"P"},{n:"Yuito Suzuki",pos:"KK"},{n:"Ayase Ueda",pos:"H"},{n:"Koki Ogawa",pos:"H"},{n:"Ayumu Seko",pos:"P"},{n:"Hiroki Ito",pos:"P"},{n:"Takehiro Tomiyasu",pos:"P"},{n:"Tomoki Hayakawa",pos:"MV"},{n:"Kaishu Sano",pos:"KK"},{n:"Junnosuke Suzuki",pos:"P"},{n:"Kento Shiogai",pos:"H"}],
+  "Ruotsi":[{n:"Jacob Widell Zetterstrom",pos:"MV"},{n:"Gustaf Lagerbielke",pos:"P"},{n:"Victor Lindelof",pos:"P"},{n:"Isak Hien",pos:"P"},{n:"Gabriel Gudmundsson",pos:"P"},{n:"Herman Johansson",pos:"P"},{n:"Lucas Bergvall",pos:"KK"},{n:"Daniel Svensson",pos:"P"},{n:"Alexander Isak",pos:"H"},{n:"Benjamin Nygren",pos:"KK"},{n:"Anthony Elanga",pos:"H"},{n:"Viktor Johansson",pos:"MV"},{n:"Ken Sema",pos:"KK"},{n:"Hjalmar Ekdal",pos:"P"},{n:"Carl Starfelt",pos:"P"},{n:"Jesper Karlstrom",pos:"KK"},{n:"Viktor Gyokeres",pos:"H"},{n:"Yasin Ayari",pos:"KK"},{n:"Mattias Svanberg",pos:"KK"},{n:"Eric Smith",pos:"P"},{n:"Alexander Bernhardsson",pos:"P"},{n:"Besfort Zeneli",pos:"KK"},{n:"Kristoffer Nordfeldt",pos:"MV"},{n:"Elliot Stroud",pos:"P"},{n:"Gustaf Nilsson",pos:"H"},{n:"Taha Ali",pos:"H"}],
+  "Tunisia":[{n:"Mouhib Chamakh",pos:"MV"},{n:"Ali Abdi",pos:"P"},{n:"Montassar Talbi",pos:"P"},{n:"Omar Rekik",pos:"P"},{n:"Adam Arous",pos:"P"},{n:"Dylan Bronn",pos:"P"},{n:"Elias Achouri",pos:"H"},{n:"Elias Saad",pos:"H"},{n:"Hazem Mastouri",pos:"H"},{n:"Hannibal Mejbri",pos:"KK"},{n:"Ismael Gharbi",pos:"KK"},{n:"Mortadha Ben Ouanes",pos:"P"},{n:"Rani Khedira",pos:"KK"},{n:"Khalil Ayari",pos:"KK"},{n:"Mohamed Hadj Mahmoud",pos:"KK"},{n:"Aymen Dahmen",pos:"MV"},{n:"Ellyes Skhiri",pos:"KK"},{n:"Rayan Elloumi",pos:"H"},{n:"Firas Chaouat",pos:"H"},{n:"Yan Valery",pos:"P"},{n:"Mohamed Ben Hmida",pos:"P"},{n:"Sabri Ben Hessen",pos:"MV"},{n:"Moutaz Neffati",pos:"P"},{n:"Raed Chikhaoui",pos:"P"},{n:"Anis Slimane",pos:"KK"},{n:"Sebastian Tounekti",pos:"KK"}],
+  "Belgia":[{n:"Thibaut Courtois",pos:"MV"},{n:"Zeno Debast",pos:"P"},{n:"Arthur Theate",pos:"P"},{n:"Brandon Mechele",pos:"P"},{n:"Maxim De Cuyper",pos:"P"},{n:"Axel Witsel",pos:"KK"},{n:"Kevin De Bruyne",pos:"KK"},{n:"Youri Tielemans",pos:"KK"},{n:"Romelu Lukaku",pos:"H"},{n:"Leandro Trossard",pos:"H"},{n:"Jeremy Doku",pos:"H"},{n:"Senne Lammens",pos:"MV"},{n:"Mike Penders",pos:"MV"},{n:"Dodi Lukebakio",pos:"H"},{n:"Thomas Meunier",pos:"P"},{n:"Koni De Winter",pos:"P"},{n:"Charles De Ketelaere",pos:"H"},{n:"Joaquin Seys",pos:"P"},{n:"Diego Moreira",pos:"KK"},{n:"Hans Vanaken",pos:"KK"},{n:"Timothy Castagne",pos:"P"},{n:"Alexis Saelemaekers",pos:"KK"},{n:"Nicolas Raskin",pos:"KK"},{n:"Amadou Onana",pos:"KK"},{n:"Nathan Ngoy",pos:"P"},{n:"Matias Fernandez-Pardo",pos:"H"}],
+  "Egypti":[{n:"Mohamed Elshenawy",pos:"MV"},{n:"Yasser Ibrahim",pos:"P"},{n:"Mohamed Hany",pos:"P"},{n:"Hossam Abdelmaguid",pos:"P"},{n:"Ramy Rabia",pos:"P"},{n:"Mohamed Abdelmoneim",pos:"P"},{n:"Trezeguet",pos:"H"},{n:"Emam Ashour",pos:"KK"},{n:"Hamza Abdelkarim",pos:"H"},{n:"Mohamed Salah",pos:"H"},{n:"Mostafa Zico",pos:"KK"},{n:"Haissem Hassan",pos:"H"},{n:"Ahmed Fatouh",pos:"P"},{n:"Hamdy Fathy",pos:"KK"},{n:"Karim Hafez",pos:"P"},{n:"Mahdy Soliman",pos:"MV"},{n:"Mohanad Lashin",pos:"KK"},{n:"Nabil Donga",pos:"KK"},{n:"Marawan Attia",pos:"KK"},{n:"Ibrahim Adel",pos:"H"},{n:"Mahmoud Saber",pos:"KK"},{n:"Omar Marmoush",pos:"H"},{n:"Mostafa Shoubir",pos:"MV"},{n:"Tarek Alaa",pos:"P"},{n:"Zizo",pos:"H"},{n:"Mohamed Alaa",pos:"MV"}],
+  "Iran":[{n:"Alireza Beiranvand",pos:"MV"},{n:"Saleh Hardani",pos:"P"},{n:"Ehsan Hajisafi",pos:"P"},{n:"Shoja Khalilzadeh",pos:"P"},{n:"Milad Mohammadi",pos:"P"},{n:"Saeid Ezatolahi",pos:"KK"},{n:"Alireza Jahanbakhsh",pos:"KK"},{n:"Mohammad Mohebbi",pos:"KK"},{n:"Mehdi Taremi",pos:"H"},{n:"Mehdi Ghayedi",pos:"H"},{n:"Ali Alipour",pos:"H"},{n:"Payam Niazmand",pos:"MV"},{n:"Hossein Kanani",pos:"P"},{n:"Saman Ghoddos",pos:"KK"},{n:"Roozbeh Cheshmi",pos:"KK"},{n:"Mehdi Torabi",pos:"KK"},{n:"Arya Yousefi",pos:"P"},{n:"Amirhossein Hosseinzadeh",pos:"H"},{n:"Ali Nemati",pos:"P"},{n:"Shahriyar Moghanloo",pos:"H"},{n:"Mohammad Ghorbani",pos:"KK"},{n:"Hossein Hosseini",pos:"MV"},{n:"Ramin Rezaeian",pos:"P"},{n:"Dennis Dargahi",pos:"H"},{n:"Danial Iri",pos:"P"},{n:"Amirmohammad Razaghinia",pos:"KK"}],
+  "Uusi-Seelanti":[{n:"Max Crocombe",pos:"MV"},{n:"Tim Payne",pos:"P"},{n:"Francis De Vries",pos:"P"},{n:"Tyler Bindon",pos:"P"},{n:"Michael Boxall",pos:"P"},{n:"Joe Bell",pos:"KK"},{n:"Matthew Garbett",pos:"KK"},{n:"Marko Stamenic",pos:"KK"},{n:"Chris Wood",pos:"H"},{n:"Sarpreet Singh",pos:"KK"},{n:"Elijah Just",pos:"KK"},{n:"Alex Paulsen",pos:"MV"},{n:"Liberato Cacace",pos:"P"},{n:"Alex Rufer",pos:"KK"},{n:"Nando Pijnaker",pos:"P"},{n:"Finn Surman",pos:"P"},{n:"Kosta Barbarouses",pos:"H"},{n:"Ben Waine",pos:"H"},{n:"Ben Old",pos:"KK"},{n:"McCOWATT",pos:"KK"},{n:"Jesse Randall",pos:"H"},{n:"Michael Woud",pos:"MV"},{n:"Ryan Thomas",pos:"KK"},{n:"Callan Elliot",pos:"P"},{n:"Lachlan Bayliss",pos:"KK"},{n:"Tommy Smith",pos:"P"}],
+  "Espanja":[{n:"David Raya",pos:"MV"},{n:"Marc Pubill",pos:"P"},{n:"Alex Grimaldo",pos:"P"},{n:"Eric Garcia",pos:"P"},{n:"Marcos Llorente",pos:"P"},{n:"Mikel Merino",pos:"KK"},{n:"Ferran Torres",pos:"H"},{n:"Fabian Ruiz",pos:"KK"},{n:"Gavi",pos:"KK"},{n:"Dani Olmo",pos:"H"},{n:"Yeremy Pino",pos:"H"},{n:"Pedro Porro",pos:"P"},{n:"Joan Garcia",pos:"MV"},{n:"Aymeric Laporte",pos:"P"},{n:"Alex Baena",pos:"KK"},{n:"Rodri",pos:"KK"},{n:"Nico Williams",pos:"H"},{n:"Martin Zubimendi",pos:"KK"},{n:"Lamine Yamal",pos:"H"},{n:"Pedri",pos:"KK"},{n:"Mikel Oyarzabal",pos:"H"},{n:"Pau Cubarsi",pos:"P"},{n:"Unai Simon",pos:"MV"},{n:"Marc Cucurella",pos:"P"},{n:"Victor Munoz",pos:"H"},{n:"Borja Iglesias",pos:"H"}],
+  "Kap Verde":[{n:"Vozinha",pos:"MV"},{n:"Stopira",pos:"P"},{n:"Diney Borges",pos:"P"},{n:"Pico Lopes",pos:"P"},{n:"Logan Costa",pos:"P"},{n:"Kevin Pina",pos:"KK"},{n:"Jovane Cabral",pos:"KK"},{n:"Joao Paulo",pos:"KK"},{n:"Gilson Benchimol",pos:"H"},{n:"Jamiro Monteiro",pos:"KK"},{n:"Garry Rodrigues",pos:"KK"},{n:"Marcio Rosa",pos:"MV"},{n:"Sidny Lopes Cabral",pos:"P"},{n:"Deroy Duarte",pos:"KK"},{n:"Laros Duarte",pos:"KK"},{n:"Yannick Semedo",pos:"KK"},{n:"Willy Semedo",pos:"KK"},{n:"Telmo Arcanjo",pos:"KK"},{n:"Dailon Livramento",pos:"H"},{n:"Ryan Mendes",pos:"H"},{n:"Nuno Da Costa",pos:"KK"},{n:"Steven Moreira",pos:"P"},{n:"Cj Dos Santos",pos:"MV"},{n:"Wagner Pina",pos:"P"},{n:"Kelvin Pires",pos:"P"},{n:"Helio Varela",pos:"KK"}],
+  "Saudi-Arabia":[{n:"Nawaf Alaqidi",pos:"MV"},{n:"Ali Majrashi",pos:"P"},{n:"Ali Lajami",pos:"P"},{n:"Abdulelah Alamri",pos:"P"},{n:"Hassan Altambakti",pos:"P"},{n:"Nasser Aldawsari",pos:"KK"},{n:"Musab Aljuwayr",pos:"KK"},{n:"Aiman Yahya",pos:"H"},{n:"Feras Albrikan",pos:"H"},{n:"Salem Aldawsari",pos:"H"},{n:"Saleh Alshehri",pos:"H"},{n:"Saud Abdulhamid",pos:"P"},{n:"Nawaf Bu Washl",pos:"P"},{n:"Hassan Kadish",pos:"P"},{n:"Abdullah Alkhaibari",pos:"KK"},{n:"Ziyad Aljohani",pos:"KK"},{n:"Khalid Alghannam",pos:"H"},{n:"Ala Alhajji",pos:"KK"},{n:"Abdullah Alhamddan",pos:"H"},{n:"Sultan Mandash",pos:"H"},{n:"Mohammed Alowais",pos:"MV"},{n:"Ahmed Alkassar",pos:"MV"},{n:"Mohamed Kanno",pos:"KK"},{n:"Moteb Alharbi",pos:"P"},{n:"Jehad Thikri",pos:"P"},{n:"Mohammed Abu Alshamat",pos:"P"}],
+  "Uruguay":[{n:"Sergio Rochet",pos:"MV"},{n:"Jose Gimenez",pos:"P"},{n:"Sebastian Caceres",pos:"P"},{n:"Ronald Araujo",pos:"P"},{n:"Manuel Ugarte",pos:"KK"},{n:"Rodrigo Bentancur",pos:"KK"},{n:"Nicolas De La Cruz",pos:"KK"},{n:"Federico Valverde",pos:"KK"},{n:"Darwin Nunez",pos:"H"},{n:"Giorgian De Arrascaeta",pos:"KK"},{n:"Facundo Pellistri",pos:"H"},{n:"Santiago Mele",pos:"MV"},{n:"Guillermo Varela",pos:"P"},{n:"Agustin Canobbio",pos:"KK"},{n:"Emiliano Martinez",pos:"KK"},{n:"Mathias Olivera",pos:"P"},{n:"Matias Vina",pos:"P"},{n:"Brian Rodriguez",pos:"H"},{n:"Rodrigo Aguirre",pos:"H"},{n:"Maxi Araujo",pos:"KK"},{n:"Federico Vinas",pos:"H"},{n:"Joaquin Piquerez",pos:"KK"},{n:"Fernando Muslera",pos:"MV"},{n:"Santiago Bueno",pos:"P"},{n:"Juan Sanabria",pos:"KK"},{n:"Rodrigo Zalazar",pos:"KK"}],
+  "Ranska":[{n:"Brice Samba",pos:"MV"},{n:"Malo Gusto",pos:"P"},{n:"Lucas Digne",pos:"P"},{n:"Dayot Upamecano",pos:"P"},{n:"Jules Kounde",pos:"P"},{n:"Manu Kone",pos:"KK"},{n:"Ousmane Dembele",pos:"H"},{n:"Aurelien Tchouameni",pos:"KK"},{n:"Marcus Thuram",pos:"H"},{n:"Kylian Mbappe",pos:"H"},{n:"Michael Olise",pos:"H"},{n:"Bradley Barcola",pos:"H"},{n:"Ngolo Kante",pos:"KK"},{n:"Adrien Rabiot",pos:"KK"},{n:"Ibrahima Konate",pos:"P"},{n:"Mike Maignan",pos:"MV"},{n:"William Saliba",pos:"P"},{n:"Warren Zaire-Emery",pos:"KK"},{n:"Theo Hernandez",pos:"P"},{n:"Desire Doue",pos:"H"},{n:"Lucas Hernandez",pos:"P"},{n:"Jean-Philippe Mateta",pos:"H"},{n:"Robin Risser",pos:"MV"},{n:"Rayan Cherki",pos:"KK"},{n:"Maghnes Akliouche",pos:"KK"},{n:"Maxence Lacroix",pos:"P"}],
+  "Senegal":[{n:"Yehvann Diouf",pos:"MV"},{n:"Mamadou Sarr",pos:"P"},{n:"Kalidou Koulibaly",pos:"P"},{n:"Abdoulaye Seck",pos:"P"},{n:"Idrissa Gueye",pos:"KK"},{n:"Pathe Ciss",pos:"KK"},{n:"Assane Diao",pos:"H"},{n:"Lamine Camara",pos:"KK"},{n:"Bamba Dieng",pos:"H"},{n:"Sadio Mane",pos:"H"},{n:"Nicolas Jackson",pos:"H"},{n:"Cherif Ndiaye",pos:"H"},{n:"Iliman Ndiaye",pos:"H"},{n:"Ismail Jakobs",pos:"P"},{n:"Krepin Diatta",pos:"P"},{n:"Edouard Mendy",pos:"MV"},{n:"Pape Sarr",pos:"KK"},{n:"Ismaila Sarr",pos:"H"},{n:"Moussa Niakhate",pos:"P"},{n:"Ibrahim Mbaye",pos:"H"},{n:"Habib Diarra",pos:"KK"},{n:"Bara Ndiaye",pos:"KK"},{n:"Mory Diaw",pos:"MV"},{n:"Antoine Mendy",pos:"P"},{n:"El Diouf",pos:"P"},{n:"Pape Gueye",pos:"KK"}],
+  "Irak":[{n:"Fahad Talib",pos:"MV"},{n:"Rebin Ghareeb",pos:"P"},{n:"Hussein Ali",pos:"P"},{n:"Zaid Tahseen",pos:"P"},{n:"Akam Hashim",pos:"P"},{n:"Munaf Younus",pos:"P"},{n:"Youssef Amyn",pos:"KK"},{n:"Ibrahim Bayesh",pos:"KK"},{n:"Ali Alhamadi",pos:"H"},{n:"Mohanad Ali",pos:"H"},{n:"Ahmed Qasim",pos:"H"},{n:"Jalal Hassan",pos:"MV"},{n:"Ali Yousif",pos:"H"},{n:"Zidane Iqbal",pos:"KK"},{n:"Ahmed Yahya",pos:"P"},{n:"Amir Alammari",pos:"KK"},{n:"Ali Jasim",pos:"H"},{n:"Aymen Hussein",pos:"H"},{n:"Kevin Yakob",pos:"KK"},{n:"Aimar Sher",pos:"KK"},{n:"Marko Farji",pos:"H"},{n:"Ahmed Basil",pos:"MV"},{n:"Merchas Doski",pos:"P"},{n:"Zaid Ismael",pos:"KK"},{n:"Mustafa Saadoon",pos:"P"},{n:"Frans Putros",pos:"P"}],
+  "Norja":[{n:"Orjan Nyland",pos:"MV"},{n:"Morten Thorsby",pos:"KK"},{n:"Kristoffer Ajer",pos:"P"},{n:"Leo Ostigard",pos:"P"},{n:"David Moller Wolfe",pos:"P"},{n:"Patrick Berg",pos:"KK"},{n:"Alexander Sorloth",pos:"H"},{n:"Sander Berge",pos:"KK"},{n:"Erling Haaland",pos:"H"},{n:"Martin Odegaard",pos:"KK"},{n:"Jorgen Strand Larsen",pos:"H"},{n:"Sander Tangvik",pos:"MV"},{n:"Egil Selvik",pos:"MV"},{n:"Fredrik Aursnes",pos:"KK"},{n:"Fredrik Bjorkan",pos:"P"},{n:"Marcus Holmgren Pedersen",pos:"P"},{n:"Torbjorn Heggem",pos:"P"},{n:"Kristian Thorstvedt",pos:"KK"},{n:"Thelo Aasgaard",pos:"KK"},{n:"Antonio Nusa",pos:"H"},{n:"Andreas Schjelderup",pos:"KK"},{n:"Oscar Bobb",pos:"KK"},{n:"Jens Hauge",pos:"KK"},{n:"Sondre Langas",pos:"P"},{n:"Henrik Falchener",pos:"P"},{n:"Julian Ryerson",pos:"H"}],
+  "Argentiina":[{n:"Juan Musso",pos:"MV"},{n:"Leonardo Balerdi",pos:"P"},{n:"Nicolas Tagliafico",pos:"P"},{n:"Gonzalo Montiel",pos:"P"},{n:"Leandro Paredes",pos:"KK"},{n:"Lisandro Martinez",pos:"P"},{n:"Rodrigo De Paul",pos:"KK"},{n:"Valentin Barco",pos:"KK"},{n:"Julian Alvarez",pos:"H"},{n:"Lionel Messi",pos:"H"},{n:"Giovani Lo Celso",pos:"KK"},{n:"Geronimo Rulli",pos:"MV"},{n:"Cristian Romero",pos:"P"},{n:"Exequiel Palacios",pos:"KK"},{n:"Nico Gonzalez",pos:"KK"},{n:"Thiago Almada",pos:"H"},{n:"Giuliano Simeone",pos:"H"},{n:"Nico Paz",pos:"H"},{n:"Nicolas Otamendi",pos:"P"},{n:"Alexis Mac Allister",pos:"KK"},{n:"Jose Lopez",pos:"H"},{n:"Lautaro Martinez",pos:"H"},{n:"Emiliano Martinez",pos:"MV"},{n:"Enzo Fernandez",pos:"KK"},{n:"Facundo Medina",pos:"P"},{n:"Nahuel Molina",pos:"P"}],
+  "Algeria":[{n:"Melvin Mastil",pos:"MV"},{n:"Aissa Mandi",pos:"P"},{n:"Achraf Abada",pos:"P"},{n:"Mohamed Tougai",pos:"P"},{n:"Zineddine Belaid",pos:"P"},{n:"Ramiz Zerrouki",pos:"KK"},{n:"Riyad Mahrez",pos:"H"},{n:"Houssem Aouar",pos:"KK"},{n:"Amine Gouiri",pos:"H"},{n:"Fares Chaibi",pos:"KK"},{n:"Anis Hadj Moussa",pos:"H"},{n:"Nadhir Benbouali",pos:"H"},{n:"Jaouen Hadjam",pos:"P"},{n:"Hicham Boudaoui",pos:"KK"},{n:"Rayan Ait-Nouri",pos:"P"},{n:"Oussama Benbot",pos:"MV"},{n:"Rafik Belghali",pos:"P"},{n:"Mohamed Amoura",pos:"H"},{n:"Nabil Bentaleb",pos:"KK"},{n:"Adil Boulbina",pos:"H"},{n:"Ramy Bensebaini",pos:"P"},{n:"Ibrahim Maza",pos:"KK"},{n:"Luca Zidane",pos:"MV"},{n:"Yassine Titraoui",pos:"KK"},{n:"Fares Ghedjemis",pos:"H"},{n:"Samir Chergui",pos:"P"}],
+  "Itävalta":[{n:"Alexander Schlager",pos:"MV"},{n:"David Affengruber",pos:"P"},{n:"Kevin Danso",pos:"P"},{n:"Xaver Schlager",pos:"KK"},{n:"Stefan Posch",pos:"P"},{n:"Nicolas Seiwald",pos:"KK"},{n:"Marko Arnautovic",pos:"H"},{n:"David Alaba",pos:"P"},{n:"Marcel Sabitzer",pos:"KK"},{n:"Florian Grillitsch",pos:"KK"},{n:"Michael Gregoritsch",pos:"H"},{n:"Florian Wiegele",pos:"MV"},{n:"Patrick Pentz",pos:"MV"},{n:"Sasa Kalajdzic",pos:"H"},{n:"Philipp Lienhart",pos:"P"},{n:"Phillip Mwene",pos:"P"},{n:"Carney Chukwuemeka",pos:"KK"},{n:"Romano Schmid",pos:"KK"},{n:"Christoph Baumgartner",pos:"KK"},{n:"Konrad Laimer",pos:"KK"},{n:"Patrick Wimmer",pos:"H"},{n:"Alexander Prass",pos:"KK"},{n:"Marco Friedl",pos:"P"},{n:"Paul Wanner",pos:"KK"},{n:"Michael Svoboda",pos:"P"},{n:"Alessandro Schoepf",pos:"KK"}],
+  "Jordania":[{n:"Yazeed Abulaila",pos:"MV"},{n:"Mohammad Abuhasheesh",pos:"P"},{n:"Abdallah Nasib",pos:"P"},{n:"Husam Abudahab",pos:"P"},{n:"Yazan Alarab",pos:"P"},{n:"Amer Jamous",pos:"KK"},{n:"Mohammad Abuzraiq",pos:"H"},{n:"Noor Alrawabdeh",pos:"KK"},{n:"Ali Olwan",pos:"H"},{n:"Mousa Altamari",pos:"H"},{n:"Odeh Fakhoury",pos:"H"},{n:"Nour Baniateyah",pos:"MV"},{n:"Mahmoud Almardi",pos:"H"},{n:"Rajaei Ayed",pos:"KK"},{n:"Ibrahim Sadeh",pos:"KK"},{n:"Mohammad Abualnadi",pos:"P"},{n:"Saleem Obaid",pos:"P"},{n:"Ibrahim Sabra",pos:"H"},{n:"Saed Alrosan",pos:"P"},{n:"Mohannad Abutaha",pos:"KK"},{n:"Nizar Alrashdan",pos:"KK"},{n:"Abdallah Alfakhori",pos:"MV"},{n:"Ehsan Haddad",pos:"P"},{n:"Ali Azaizeh",pos:"H"},{n:"Mohammad Aldaoud",pos:"KK"},{n:"Anas Badawi",pos:"P"}],
+  "Portugali":[{n:"Diogo Costa",pos:"MV"},{n:"Nelson Semedo",pos:"P"},{n:"Ruben Dias",pos:"P"},{n:"Tomas Araujo",pos:"P"},{n:"Diogo Dalot",pos:"P"},{n:"Matheus Nunes",pos:"KK"},{n:"Cristiano Ronaldo",pos:"H"},{n:"Bruno Fernandes",pos:"KK"},{n:"Goncalo Ramos",pos:"H"},{n:"Bernardo Silva",pos:"KK"},{n:"Joao Felix",pos:"H"},{n:"Jose Sa",pos:"MV"},{n:"Renato Veiga",pos:"P"},{n:"Goncalo Inacio",pos:"P"},{n:"Joao Neves",pos:"KK"},{n:"Francisco Trincao",pos:"H"},{n:"Rafael Leao",pos:"H"},{n:"Pedro Neto",pos:"H"},{n:"Goncalo Guedes",pos:"H"},{n:"Joao Cancelo",pos:"P"},{n:"Ruben Neves",pos:"KK"},{n:"Rui Silva",pos:"MV"},{n:"Vitinha",pos:"KK"},{n:"Samu Costa",pos:"P"},{n:"Nuno Mendes",pos:"P"},{n:"Francisco Conceicao",pos:"H"}],
+  "Kongon dem. tasavalta":[{n:"Lionel Mpasi",pos:"MV"},{n:"Aaron Wan-Bissaka",pos:"P"},{n:"Steve Kapuadi",pos:"P"},{n:"Axel Tuanzebe",pos:"P"},{n:"Dylan Batubinsika",pos:"P"},{n:"Ngalayel Mukau",pos:"KK"},{n:"Nathanael Mbuku",pos:"KK"},{n:"Samuel Moutoussamy",pos:"KK"},{n:"Brian Cipenga",pos:"H"},{n:"Theo Bongonda",pos:"KK"},{n:"Gael Kakuta",pos:"H"},{n:"Joris Kayembe",pos:"P"},{n:"Meschack Elia",pos:"H"},{n:"Noah Sadiki",pos:"KK"},{n:"Aaron Tshibola",pos:"KK"},{n:"Timothy Fayulu",pos:"MV"},{n:"Cedric Bakambu",pos:"H"},{n:"Charles Pickel",pos:"KK"},{n:"Fiston Mayele",pos:"H"},{n:"Yoane Wissa",pos:"H"},{n:"Matthieu Epolo",pos:"MV"},{n:"Chancel Mbemba",pos:"P"},{n:"Simon Banza",pos:"H"},{n:"Gedeon Kalulu",pos:"P"},{n:"Edo Kayembe",pos:"KK"},{n:"Arthur Masuaku",pos:"P"}],
+  "Uzbekistan":[{n:"Utkir Yusupov",pos:"MV"},{n:"Abdukodir Khusanov",pos:"P"},{n:"Khojiakbar Alijonov",pos:"P"},{n:"Farrukh Sayfiev",pos:"P"},{n:"Rustam Ashurmatov",pos:"P"},{n:"Akmal Mozgovoy",pos:"KK"},{n:"Otabek Shukurov",pos:"KK"},{n:"Jamshid Iskanderov",pos:"KK"},{n:"Odiljon Xamrobekov",pos:"KK"},{n:"Jaloliddin Masharipov",pos:"KK"},{n:"Oston Urunov",pos:"KK"},{n:"Abduvohid Nematov",pos:"MV"},{n:"Sherzod Nasrullaev",pos:"P"},{n:"Eldor Shomurodov",pos:"H"},{n:"Umar Eshmurodov",pos:"P"},{n:"Botirali Ergashev",pos:"MV"},{n:"Dostonbek Khamdamov",pos:"KK"},{n:"Abdulla Abdullaev",pos:"P"},{n:"Azizjon Ganiev",pos:"KK"},{n:"Azizbek Amonov",pos:"H"},{n:"Igor Sergeev",pos:"H"},{n:"Abbosbek Fayzullaev",pos:"KK"},{n:"Sherzod Esanov",pos:"KK"},{n:"Behruzjon Karimov",pos:"P"},{n:"Avazbek Ulmasaliyev",pos:"P"},{n:"Jakhongir Urozov",pos:"P"}],
+  "Kolumbia":[{n:"David Ospina",pos:"MV"},{n:"Daniel Munoz",pos:"P"},{n:"Jhon Lucumi",pos:"P"},{n:"Santiago Arias",pos:"P"},{n:"Kevin Castano",pos:"KK"},{n:"Richard Rios",pos:"KK"},{n:"Luis Diaz",pos:"H"},{n:"Jorge Carrascal",pos:"KK"},{n:"Jhon Cordoba",pos:"H"},{n:"James Rodriguez",pos:"KK"},{n:"Jhon Arias",pos:"KK"},{n:"Camilo Vargas",pos:"MV"},{n:"Yerry Mina",pos:"P"},{n:"Gustavo Puerta",pos:"P"},{n:"Juan Portilla",pos:"KK"},{n:"Jefferson Lerma",pos:"KK"},{n:"Johan Mojica",pos:"P"},{n:"Willer Ditta",pos:"P"},{n:"Cucho Hernandez",pos:"H"},{n:"Juan Quintero",pos:"KK"},{n:"Leandro Campaz",pos:"H"},{n:"Deiver Machado",pos:"P"},{n:"Davinson Sanchez",pos:"P"},{n:"Alvaro Montero",pos:"MV"},{n:"Luis Suarez",pos:"H"},{n:"Andres Gomez",pos:"H"}],
+  "Englanti":[{n:"Jordan Pickford",pos:"MV"},{n:"Ezri Konsa",pos:"P"},{n:"Nico Oreilly",pos:"P"},{n:"Declan Rice",pos:"KK"},{n:"John Stones",pos:"P"},{n:"Marc Guehi",pos:"P"},{n:"Bukayo Saka",pos:"H"},{n:"Elliot Anderson",pos:"KK"},{n:"Harry Kane",pos:"H"},{n:"Jude Bellingham",pos:"KK"},{n:"Marcus Rashford",pos:"H"},{n:"Tino Livramento",pos:"P"},{n:"Dean Henderson",pos:"MV"},{n:"Jordan Henderson",pos:"KK"},{n:"Dan Burn",pos:"P"},{n:"Kobbie Mainoo",pos:"KK"},{n:"Morgan Rogers",pos:"KK"},{n:"Anthony Gordon",pos:"H"},{n:"Ollie Watkins",pos:"H"},{n:"Noni Madueke",pos:"H"},{n:"Eberechi Eze",pos:"KK"},{n:"Ivan Toney",pos:"H"},{n:"James Trafford",pos:"MV"},{n:"Reece James",pos:"P"},{n:"Djed Spence",pos:"P"},{n:"Jarell Quansah",pos:"P"}],
+  "Kroatia":[{n:"Dominik Livakovic",pos:"MV"},{n:"Josip Stanisic",pos:"P"},{n:"Marin Pongracic",pos:"P"},{n:"Josko Gvardiol",pos:"P"},{n:"Duje Caleta-Car",pos:"P"},{n:"Josip Sutalo",pos:"P"},{n:"Nikola Moro",pos:"KK"},{n:"Mateo Kovacic",pos:"KK"},{n:"Andrej Kramaric",pos:"H"},{n:"Luka Modric",pos:"KK"},{n:"Ante Budimir",pos:"H"},{n:"Ivor Pandur",pos:"MV"},{n:"Nikola Vlasic",pos:"KK"},{n:"Ivan Perisic",pos:"H"},{n:"Mario Pasalic",pos:"KK"},{n:"Martin Baturina",pos:"KK"},{n:"Petar Sucic",pos:"KK"},{n:"Kristijan Jakic",pos:"P"},{n:"Toni Fruk",pos:"KK"},{n:"Igor Matanovic",pos:"H"},{n:"Luka Sucic",pos:"KK"},{n:"Luka Vuskovic",pos:"P"},{n:"Dominik Kotarski",pos:"MV"},{n:"Marco Pasalic",pos:"H"},{n:"Martin Erlic",pos:"P"},{n:"Petar Musa",pos:"H"}],
+  "Ghana":[{n:"Lawrence Zigi",pos:"MV"},{n:"Alidu Seidu",pos:"P"},{n:"Caleb Yirenkyi",pos:"KK"},{n:"Jonas Adjetey",pos:"P"},{n:"Thomas Partey",pos:"KK"},{n:"Abdul Mumin",pos:"P"},{n:"Fatawu Issahaku",pos:"H"},{n:"Kwasi Sibo",pos:"KK"},{n:"Jordan Ayew",pos:"H"},{n:"Brandon Thomas-Asante",pos:"H"},{n:"Antoine Semenyo",pos:"KK"},{n:"Joseph Anang",pos:"MV"},{n:"Christopher Baah",pos:"H"},{n:"Gideon Mensah",pos:"P"},{n:"Elisha Owusu",pos:"KK"},{n:"Benjamin Asare",pos:"MV"},{n:"Baba Rahman",pos:"P"},{n:"Jerome Opoku",pos:"P"},{n:"Inaki Williams",pos:"H"},{n:"Augustine Boakye",pos:"KK"},{n:"Kojo Oppong",pos:"P"},{n:"Kamaldeen Sulemana",pos:"H"},{n:"Derrick Luckassen",pos:"P"},{n:"Ernest Nuamah",pos:"H"},{n:"Prince Adu",pos:"H"},{n:"Marvin Senaya",pos:"P"}],
+  "Panama":[{n:"Luis Mejia",pos:"MV"},{n:"Cesar Blackman",pos:"P"},{n:"Jose Cordoba",pos:"P"},{n:"Fidel Escobar",pos:"P"},{n:"Edgardo Farina",pos:"P"},{n:"Cristian Martinez",pos:"KK"},{n:"Jose Rodriguez",pos:"KK"},{n:"Adalberto Carrasquilla",pos:"KK"},{n:"Tomas Rodriguez",pos:"H"},{n:"Ismael Diaz",pos:"KK"},{n:"Edgar Barcenas",pos:"KK"},{n:"Cesar Samudio",pos:"MV"},{n:"Jiovany Ramos",pos:"P"},{n:"Carlos Harvey",pos:"P"},{n:"Eric Davis",pos:"P"},{n:"Andres Andrade",pos:"P"},{n:"Jose Fajardo",pos:"H"},{n:"Cecilio Waterman",pos:"H"},{n:"Alberto Quintero",pos:"KK"},{n:"Anibal Godoy",pos:"KK"},{n:"Cesar Yanis",pos:"KK"},{n:"Orlando Mosquera",pos:"MV"},{n:"Amir Murillo",pos:"P"},{n:"Azarias Londono",pos:"H"},{n:"Roderick Miller",pos:"P"},{n:"Jorge Gutierrez",pos:"P"}],
+};
+
+/* Turnauslogo (pokaali) — pakattu kuva upotettuna */
+const WC_LOGO = "data:image/png;base64,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";
+
+const POS = {
+  MV:{label:"Maalivahti",cs:6,goal:8,assist:6,red:-3,og:-2},
+  P:{label:"Puolustaja",cs:3,goal:7,assist:3,red:-3,og:-2},
+  KK:{label:"Keskikenttä",cs:1,goal:6,assist:3,red:-3,og:-2},
+  H:{label:"Hyökkääjä",cs:0,goal:5,assist:3,red:-3,og:-2},
+};
+const POS_ORDER=["MV","P","KK","H"];
+const WIN_POINTS=5, CHAMP_POINTS=10;
+
+const FIXTURES=[
+{id:1,date:"2026-06-11",group:"A",home:"Meksiko",away:"Etelä-Afrikka",hg:"",ag:"",dbl:false},
+{id:2,date:"2026-06-11",group:"A",home:"Etelä-Korea",away:"Tšekki",hg:"",ag:"",dbl:false},
+{id:3,date:"2026-06-12",group:"B",home:"Kanada",away:"Bosnia-Hertsegovina",hg:"",ag:"",dbl:false},
+{id:4,date:"2026-06-12",group:"D",home:"Yhdysvallat",away:"Paraguay",hg:"",ag:"",dbl:false},
+{id:5,date:"2026-06-13",group:"B",home:"Qatar",away:"Sveitsi",hg:"",ag:"",dbl:false},
+{id:6,date:"2026-06-13",group:"C",home:"Brasilia",away:"Marokko",hg:"",ag:"",dbl:false},
+{id:7,date:"2026-06-13",group:"C",home:"Haiti",away:"Skotlanti",hg:"",ag:"",dbl:false},
+{id:8,date:"2026-06-13",group:"D",home:"Australia",away:"Turkki",hg:"",ag:"",dbl:false},
+{id:9,date:"2026-06-14",group:"E",home:"Saksa",away:"Curaçao",hg:"",ag:"",dbl:false},
+{id:10,date:"2026-06-14",group:"F",home:"Alankomaat",away:"Japani",hg:"",ag:"",dbl:false},
+{id:11,date:"2026-06-14",group:"E",home:"Norsunluurannikko",away:"Ecuador",hg:"",ag:"",dbl:false},
+{id:12,date:"2026-06-14",group:"F",home:"Ruotsi",away:"Tunisia",hg:"",ag:"",dbl:false},
+{id:13,date:"2026-06-15",group:"H",home:"Espanja",away:"Kap Verde",hg:"",ag:"",dbl:false},
+{id:14,date:"2026-06-15",group:"G",home:"Belgia",away:"Egypti",hg:"",ag:"",dbl:false},
+{id:15,date:"2026-06-15",group:"H",home:"Saudi-Arabia",away:"Uruguay",hg:"",ag:"",dbl:false},
+{id:16,date:"2026-06-15",group:"G",home:"Iran",away:"Uusi-Seelanti",hg:"",ag:"",dbl:false},
+{id:17,date:"2026-06-16",group:"I",home:"Ranska",away:"Senegal",hg:"",ag:"",dbl:false},
+{id:18,date:"2026-06-16",group:"I",home:"Irak",away:"Norja",hg:"",ag:"",dbl:false},
+{id:19,date:"2026-06-16",group:"J",home:"Argentiina",away:"Algeria",hg:"",ag:"",dbl:false},
+{id:20,date:"2026-06-16",group:"J",home:"Itävalta",away:"Jordania",hg:"",ag:"",dbl:false},
+{id:21,date:"2026-06-17",group:"K",home:"Portugali",away:"Kongon dem. tasavalta",hg:"",ag:"",dbl:false},
+{id:22,date:"2026-06-17",group:"L",home:"Englanti",away:"Kroatia",hg:"",ag:"",dbl:false},
+{id:23,date:"2026-06-17",group:"L",home:"Ghana",away:"Panama",hg:"",ag:"",dbl:false},
+{id:24,date:"2026-06-17",group:"K",home:"Uzbekistan",away:"Kolumbia",hg:"",ag:"",dbl:false},
+{id:25,date:"2026-06-18",group:"A",home:"Tšekki",away:"Etelä-Afrikka",hg:"",ag:"",dbl:false},
+{id:26,date:"2026-06-18",group:"B",home:"Sveitsi",away:"Bosnia-Hertsegovina",hg:"",ag:"",dbl:false},
+{id:27,date:"2026-06-18",group:"B",home:"Kanada",away:"Qatar",hg:"",ag:"",dbl:false},
+{id:28,date:"2026-06-18",group:"A",home:"Meksiko",away:"Etelä-Korea",hg:"",ag:"",dbl:false},
+{id:29,date:"2026-06-19",group:"D",home:"Yhdysvallat",away:"Australia",hg:"",ag:"",dbl:false},
+{id:30,date:"2026-06-19",group:"C",home:"Skotlanti",away:"Marokko",hg:"",ag:"",dbl:false},
+{id:31,date:"2026-06-19",group:"C",home:"Brasilia",away:"Haiti",hg:"",ag:"",dbl:false},
+{id:32,date:"2026-06-19",group:"D",home:"Turkki",away:"Paraguay",hg:"",ag:"",dbl:false},
+{id:33,date:"2026-06-20",group:"F",home:"Alankomaat",away:"Ruotsi",hg:"",ag:"",dbl:false},
+{id:34,date:"2026-06-20",group:"E",home:"Saksa",away:"Norsunluurannikko",hg:"",ag:"",dbl:false},
+{id:35,date:"2026-06-20",group:"E",home:"Ecuador",away:"Curaçao",hg:"",ag:"",dbl:false},
+{id:36,date:"2026-06-20",group:"F",home:"Tunisia",away:"Japani",hg:"",ag:"",dbl:false},
+{id:37,date:"2026-06-21",group:"H",home:"Espanja",away:"Saudi-Arabia",hg:"",ag:"",dbl:false},
+{id:38,date:"2026-06-21",group:"G",home:"Belgia",away:"Iran",hg:"",ag:"",dbl:false},
+{id:39,date:"2026-06-21",group:"H",home:"Uruguay",away:"Kap Verde",hg:"",ag:"",dbl:false},
+{id:40,date:"2026-06-21",group:"G",home:"Uusi-Seelanti",away:"Egypti",hg:"",ag:"",dbl:false},
+{id:41,date:"2026-06-22",group:"J",home:"Argentiina",away:"Itävalta",hg:"",ag:"",dbl:false},
+{id:42,date:"2026-06-22",group:"I",home:"Ranska",away:"Irak",hg:"",ag:"",dbl:false},
+{id:43,date:"2026-06-22",group:"I",home:"Norja",away:"Senegal",hg:"",ag:"",dbl:false},
+{id:44,date:"2026-06-22",group:"J",home:"Jordania",away:"Algeria",hg:"",ag:"",dbl:false},
+{id:45,date:"2026-06-23",group:"K",home:"Portugali",away:"Uzbekistan",hg:"",ag:"",dbl:false},
+{id:46,date:"2026-06-23",group:"L",home:"Englanti",away:"Ghana",hg:"",ag:"",dbl:false},
+{id:47,date:"2026-06-23",group:"L",home:"Panama",away:"Kroatia",hg:"",ag:"",dbl:false},
+{id:48,date:"2026-06-23",group:"K",home:"Kolumbia",away:"Kongon dem. tasavalta",hg:"",ag:"",dbl:false},
+{id:49,date:"2026-06-24",group:"B",home:"Sveitsi",away:"Kanada",hg:"",ag:"",dbl:false},
+{id:50,date:"2026-06-24",group:"B",home:"Bosnia-Hertsegovina",away:"Qatar",hg:"",ag:"",dbl:false},
+{id:51,date:"2026-06-24",group:"C",home:"Skotlanti",away:"Brasilia",hg:"",ag:"",dbl:false},
+{id:52,date:"2026-06-24",group:"C",home:"Marokko",away:"Haiti",hg:"",ag:"",dbl:false},
+{id:53,date:"2026-06-24",group:"A",home:"Tšekki",away:"Meksiko",hg:"",ag:"",dbl:false},
+{id:54,date:"2026-06-24",group:"A",home:"Etelä-Afrikka",away:"Etelä-Korea",hg:"",ag:"",dbl:false},
+{id:55,date:"2026-06-25",group:"E",home:"Ecuador",away:"Saksa",hg:"",ag:"",dbl:false},
+{id:56,date:"2026-06-25",group:"E",home:"Curaçao",away:"Norsunluurannikko",hg:"",ag:"",dbl:false},
+{id:57,date:"2026-06-25",group:"F",home:"Japani",away:"Ruotsi",hg:"",ag:"",dbl:false},
+{id:58,date:"2026-06-25",group:"F",home:"Tunisia",away:"Alankomaat",hg:"",ag:"",dbl:false},
+{id:59,date:"2026-06-25",group:"D",home:"Turkki",away:"Yhdysvallat",hg:"",ag:"",dbl:false},
+{id:60,date:"2026-06-25",group:"D",home:"Paraguay",away:"Australia",hg:"",ag:"",dbl:false},
+{id:61,date:"2026-06-26",group:"I",home:"Norja",away:"Ranska",hg:"",ag:"",dbl:false},
+{id:62,date:"2026-06-26",group:"I",home:"Senegal",away:"Irak",hg:"",ag:"",dbl:false},
+{id:63,date:"2026-06-26",group:"H",home:"Kap Verde",away:"Saudi-Arabia",hg:"",ag:"",dbl:false},
+{id:64,date:"2026-06-26",group:"H",home:"Uruguay",away:"Espanja",hg:"",ag:"",dbl:false},
+{id:65,date:"2026-06-26",group:"G",home:"Egypti",away:"Iran",hg:"",ag:"",dbl:false},
+{id:66,date:"2026-06-26",group:"G",home:"Uusi-Seelanti",away:"Belgia",hg:"",ag:"",dbl:false},
+{id:67,date:"2026-06-27",group:"L",home:"Panama",away:"Englanti",hg:"",ag:"",dbl:false},
+{id:68,date:"2026-06-27",group:"L",home:"Kroatia",away:"Ghana",hg:"",ag:"",dbl:false},
+{id:69,date:"2026-06-27",group:"K",home:"Kolumbia",away:"Portugali",hg:"",ag:"",dbl:false},
+{id:70,date:"2026-06-27",group:"K",home:"Kongon dem. tasavalta",away:"Uzbekistan",hg:"",ag:"",dbl:false},
+{id:71,date:"2026-06-27",group:"J",home:"Algeria",away:"Itävalta",hg:"",ag:"",dbl:false},
+{id:72,date:"2026-06-27",group:"J",home:"Jordania",away:"Argentiina",hg:"",ag:"",dbl:false}
+];
+function buildSeedMatches(){ return FIXTURES.map(m=>({...m})); }
+function todayISO(){ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+const WD=["su","ma","ti","ke","to","pe","la"];
+function dateLabel(ds,ts){ const d=new Date(ds+"T12:00:00"),t=new Date(ts+"T12:00:00"); const diff=Math.round((d-t)/86400000);
+  if(diff===0)return"tänään"; if(diff===1)return"huomenna"; if(diff===-1)return"eilen"; if(diff===2)return"ylihuomenna";
+  return WD[d.getDay()]+" "+d.getDate()+"."+(d.getMonth()+1)+"."; }
+
+/* ===================== PISTEYTYS ===================== */
+const sign=x=>x>0?1:x<0?-1:0;
+function matchPoints(pred,m){
+  if(!pred||pred.h===""||pred.a===""||pred.h==null||pred.a==null) return null;
+  if(m.hg===""||m.ag===""||m.hg==null||m.ag==null) return null;
+  const ph=+pred.h,pa=+pred.a,ah=+m.hg,aa=+m.ag; let base=0;
+  if(sign(ph-pa)===sign(ah-aa)){ const hits=(ph===ah?1:0)+(pa===aa?1:0); base=hits===2?5:hits===1?4:3; }
+  return m.dbl?base*2:base;
+}
+const pkey=(name,country)=>`${(name||"").trim()}__${country||""}`;
+const signp=(n)=> `${n}`;
+function playerPts(pos,tally){ if(!tally) return 0; const k=POS[pos];
+  return (+tally.cs||0)*k.cs+(+tally.goal||0)*k.goal+(+tally.assist||0)*k.assist+(+tally.red||0)*k.red+(+tally.og||0)*k.og; }
+function autoGroupWins(team,matches){ let n=0; (matches||[]).forEach(mt=>{
+  if(mt.hg===""||mt.hg==null||mt.ag===""||mt.ag==null) return; const hg=+mt.hg,ag=+mt.ag;
+  if(mt.home===team&&hg>ag) n++; else if(mt.away===team&&ag>hg) n++; }); return n; }
+function teamTotalWins(team,matches,teamstats){ const t=(teamstats&&teamstats[team])||{}; return autoGroupWins(team,matches)+(+t.wins||0); }
+function teamPoints(team,matches,teamstats){ const t=(teamstats&&teamstats[team])||{};
+  return teamTotalWins(team,matches,teamstats)*WIN_POINTS+(t.champ?CHAMP_POINTS:0); }
+
+/* ===================== FIREBASE ===================== */
+const cfgOk = window.FIREBASE_CONFIG && !String(window.FIREBASE_CONFIG.apiKey).startsWith("TÄHÄN");
+let db=null;
+if(cfgOk){ firebase.initializeApp(window.FIREBASE_CONFIG); db=firebase.firestore(); }
+const docRef=(n)=>db.collection("wc26").doc(n);
+const nameId=(name)=>name.trim().replace(/[\/]/g,"-").slice(0,300);
+
+/* ===================== LASKURI ===================== */
+function Countdown(){
+  const target=useMemo(()=>{ const d=FIXTURES.reduce((a,b)=>a.date<b.date?a:b).date; return new Date(d+"T00:00:00").getTime(); },[]);
+  const [now,setNow]=useState(Date.now());
+  useEffect(()=>{ const t=setInterval(()=>setNow(Date.now()),1000); return ()=>clearInterval(t); },[]);
+  const diff=target-now;
+  if(diff<=0) return <div className="countdown"><div className="cdbox"><div className="cdnum">⚽</div><div className="cdlab">Käynnissä</div></div></div>;
+  const s=Math.floor(diff/1000), d=Math.floor(s/86400), h=Math.floor((s%86400)/3600), m=Math.floor((s%3600)/60), ss=s%60;
+  const pad=n=>String(n).padStart(2,"0");
+  return (<div className="countdown">
+    <div className="cdbox"><div className="cdnum">{d}</div><div className="cdlab">päivää</div></div>
+    <div className="cdbox"><div className="cdnum">{pad(h)}</div><div className="cdlab">tuntia</div></div>
+    <div className="cdbox"><div className="cdnum">{pad(m)}</div><div className="cdlab">min</div></div>
+    <div className="cdbox"><div className="cdnum">{pad(ss)}</div><div className="cdlab">sek</div></div>
+  </div>);
+}
+
+/* ===================== APP ===================== */
+function App(){
+  const [tab,setTab]=useState("veikkaus");
+  const [detail,setDetail]=useState(null);
+  const [matches,setMatches]=useState(null);
+  const [config,setConfig]=useState({locked:false,pin:"",stake:10});
+  const [teamstats,setTeamstats]=useState({});
+  const [playerstats,setPlayerstats]=useState({});
+  const [preds,setPreds]=useState({});
+  const [err,setErr]=useState("");
+
+  useEffect(()=>{
+    if(!cfgOk) return;
+    const subs=[];
+    subs.push(docRef("matches").onSnapshot(d=>{
+      const fromCache = d.metadata && d.metadata.fromCache;
+      if(!d.exists){
+        // Dokumenttia ei ole: kylvä pohja VAIN jos tieto on palvelimelta (ei välimuistin "ei tietoa" -tila).
+        if(!fromCache){ const sd=buildSeedMatches(); docRef("matches").set({list:sd}).catch(e=>setErr(e.message)); setMatches(sd); }
+        return;
+      }
+      const lst=d.data().list;
+      if(Array.isArray(lst)&&lst.length&&lst[0]&&lst[0].date){ setMatches(lst); }
+      // Dokumentti on olemassa mutta lista näyttää tyhjältä/rikkinäiseltä:
+      // EI KOSKAAN ylikirjoiteta tietokantaa. Näytetään pohja vain muistissa jos meillä ei vielä ole mitään.
+      else { setMatches(prev=>prev||buildSeedMatches()); }
+    },e=>setErr(e.message)));
+    subs.push(docRef("config").onSnapshot(d=>{ if(d.exists) setConfig({locked:false,pin:"",stake:10,...d.data()}); },e=>setErr(e.message)));
+    subs.push(docRef("teamstats").onSnapshot(d=>{ setTeamstats(d.exists?(d.data().map||{}):{}); }));
+    subs.push(docRef("playerstats").onSnapshot(d=>{ setPlayerstats(d.exists?(d.data().map||{}):{}); }));
+    subs.push(db.collection("predictions").onSnapshot(s=>{ const o={}; s.forEach(x=>o[x.id]=x.data()); setPreds(o); },e=>setErr(e.message)));
+    return ()=>subs.forEach(u=>u&&u());
+  },[]);
+
+  const scores=useMemo(()=>{
+    const out={}; const ms=matches||[];
+    Object.entries(preds).forEach(([id,p])=>{
+      let mp=0; ms.forEach(mt=>{ const pt=matchPoints(p.scores&&p.scores[mt.id],mt); if(pt) mp+=pt; });
+      let pp=0; POS_ORDER.forEach(pos=>{ const pk=p.picks&&p.picks[pos];
+        if(pk&&pk.name) pp+=playerPts(pos,playerstats[pkey(pk.name,pk.country)]); });
+      let tp=0; if(p.team){ tp=teamPoints(p.team,ms,teamstats); }
+      out[id]={mp,pp,tp,total:mp+pp+tp};
+    });
+    return out;
+  },[preds,matches,playerstats,teamstats]);
+
+  if(!cfgOk) return <Setup/>;
+  if(matches===null) return <div className="wrap" style={{paddingTop:80}}><p className="lab">Yhdistetään tietokantaan…</p>{err&&<div className="note err">Virhe: {err}</div>}</div>;
+
+  return (
+    <div className="wrap">
+      <Toast/>
+      <header className="hero">
+        <div className="herorow">
+          <img className="logo" src={WC_LOGO} alt="FIFA World Cup 2026"/>
+          <div className="htxt">
+            <div className="kick">USA · KANADA · MEKSIKO — 11.6.–19.7.2026</div>
+            <h1 className="title">MM-<em>VEIKKAUS</em> '26</h1>
+            <p className="sub">Veikkaa alkulohkon ottelut ja kokoa oma joukkueesi.</p>
+          </div>
+          <Countdown/>
+        </div>
+      </header>
+      <nav className="tabs">
+        {[["veikkaus","Oma veikkaus"],["karki","Tulostaulukko"],["ottelut","Ottelut"],["saannot","Säännöt"],["jarjestaja","Järjestäjä"]].map(([k,l])=>
+          <button key={k} className={"tab"+(tab===k?" on":"")} onClick={()=>setTab(k)}>{l}</button>)}
+      </nav>
+      {err&&<div className="note err">Tietokantavirhe: {err} — tarkista Firestore-säännöt (README vaihe 4).</div>}
+      {tab==="veikkaus"&&<Veikkaus matches={matches} preds={preds} config={config} playerstats={playerstats}/>}
+      {tab==="karki"&&(detail&&preds[detail]
+        ? <Kortti p={preds[detail]} sc={scores[detail]} matches={matches} teamstats={teamstats} playerstats={playerstats} onBack={()=>setDetail(null)}/>
+        : <Fragment>
+            <PotBar count={Object.keys(preds).length} played={matches.filter(m=>m.hg!==""&&m.hg!=null).length} total={matches.length} stake={config.stake||10}/>
+            {config.locked&&<Live matches={matches} preds={preds} today={todayISO()}/>}
+            {config.locked&&<Porssi preds={preds} playerstats={playerstats}/>}
+            <Karki preds={preds} scores={scores} matches={matches} playerstats={playerstats} teamstats={teamstats} locked={config.locked} onOpen={id=>setDetail(id)} stake={config.stake||10}/>
+          </Fragment>)}
+      {tab==="ottelut"&&<Ottelut matches={matches} preds={preds} locked={config.locked}/>}
+      {tab==="saannot"&&<Saannot stake={config.stake!=null?config.stake:10}/>}
+      {tab==="jarjestaja"&&<Admin matches={matches} preds={preds} config={config} teamstats={teamstats} playerstats={playerstats}/>}
+      <p className="tiny" style={{marginTop:28,textAlign:"center"}}>
+        Tarkemmat säännöt ja pisteytys löydät <b style={{color:"var(--blue2)"}}>Säännöt</b>-välilehdeltä.
+      </p>
+    </div>
+  );
+}
+
+function Setup(){
+  return <div className="wrap" style={{paddingTop:60}}>
+    <header className="hero"><div className="kick">Asennus kesken</div><h1 className="title">MM-<em>VEIKKAUS</em></h1></header>
+    <div className="card"><div className="lab warn">Firebase-asetukset puuttuvat</div>
+    <p>Avaa <b>index.html</b> ja korvaa kohdassa <code>window.FIREBASE_CONFIG</code> olevat "TÄHÄN"-arvot omilla Firebase-tiedoillasi. Ohjeet ovat README-tiedostossa (vaihe 3).</p></div></div>;
+}
+
+/* ===================== JOUKKUEVALITSIN ===================== */
+function TeamPicker({value,onChange,disabled,playerstats,showPts}){
+  const picks=value.picks||{};
+  const [custom,setCustom]=useState({});
+  const countries=POS_ORDER.map(p=>picks[p]&&picks[p].country).filter(Boolean);
+  const dup = countries.length!==new Set(countries).size;
+  const setField=(pos,patch)=>{ const np={...picks,[pos]:{...(picks[pos]||{name:"",country:""}),...patch}}; onChange({...value,picks:np}); };
+  return (
+    <div>
+      <div className="grid4">
+        {POS_ORDER.map(pos=>{
+          const pk=picks[pos]||{name:"",country:""};
+          const squad=pk.country?(SQUADS[pk.country]||null):null;
+          const hasSquad=squad&&squad.length>0;
+          const known=hasSquad&&squad.some(p=>p.n===pk.name);
+          const isCustom=!!custom[pos];
+          const pts=(showPts&&pk.name)?playerPts(pos,playerstats[pkey(pk.name,pk.country)]):null;
+          const selVal=isCustom?"__custom__":(known?pk.name:(pk.name?"__own__":""));
+          return (
+            <div key={pos} className="card" style={{margin:0,padding:12}}>
+              <div className="lab" style={{color:"var(--blue2)"}}>{POS[pos].label}</div>
+              <select style={{width:"100%",marginTop:6}} disabled={disabled}
+                value={pk.country||""} onChange={e=>{setField(pos,{country:e.target.value,name:""});setCustom(s=>({...s,[pos]:false}));}}>
+                <option value="">— maa —</option>
+                {ALL_TEAMS.map(t=><option key={t} value={t}>{t}</option>)}
+              </select>
+              {hasSquad
+                ? <select style={{width:"100%",marginTop:6}} disabled={disabled} value={selVal}
+                    onChange={e=>{const v=e.target.value;
+                      if(v==="__custom__"){setCustom(s=>({...s,[pos]:true}));}
+                      else if(v==="__own__"){}
+                      else {setField(pos,{name:v});setCustom(s=>({...s,[pos]:false}));}}}>
+                    <option value="">— pelaaja —</option>
+                    <optgroup label={POS[pos].label}>
+                      {squad.filter(p=>p.pos===pos).map(p=><option key={p.n} value={p.n}>{p.n}</option>)}
+                    </optgroup>
+                    <optgroup label="Muut pelaajat">
+                      {squad.filter(p=>p.pos!==pos).map(p=><option key={p.n} value={p.n}>{p.n}</option>)}
+                    </optgroup>
+                    {pk.name&&!known&&<option value="__own__">{pk.name} (oma)</option>}
+                    <option value="__custom__">✏ Muu / kirjoita itse…</option>
+                  </select>
+                : null}
+              {(!hasSquad||isCustom)&&
+                <input style={{width:"100%",marginTop:6}} placeholder="Pelaajan nimi" disabled={disabled}
+                  value={pk.name||""} onChange={e=>setField(pos,{name:e.target.value})}/>}
+              <div className="tiny" style={{marginTop:6}}>Maali {POS[pos].goal}p · syöttö {POS[pos].assist}p · 0-peli {POS[pos].cs}p{pts!=null?` · nyt ${pts}p`:""}</div>
+            </div>
+          );
+        })}
+      </div>
+      {dup && <div className="note warn">⚠️ Saman maan pelaajia voi valita vain yhden. Valitse pelaajat neljästä eri maasta.</div>}
+      <div className="divider"/>
+      <div className="lab">Mestarijoukkue (voitto {WIN_POINTS}p/ottelu, mestaruus {CHAMP_POINTS}p)</div>
+      <select style={{width:"100%",marginTop:6,maxWidth:340}} disabled={disabled}
+        value={value.team||""} onChange={e=>onChange({...value,team:e.target.value})}>
+        <option value="">— valitse —</option>
+        {ALL_TEAMS.map(t=><option key={t} value={t}>{t}</option>)}
+      </select>
+    </div>
+  );
+}
+const hasDupCountry=(v)=>{ const c=POS_ORDER.map(p=>v.picks&&v.picks[p]&&v.picks[p].country).filter(Boolean); return c.length!==new Set(c).size; };
+
+/* ===================== OMA VEIKKAUS ===================== */
+function Veikkaus({matches,preds,config,playerstats}){
+  const existing=Object.keys(preds).sort((a,b)=>a.localeCompare(b,"fi"));
+  const [name,setName]=useState("");
+  const [draft,setDraft]=useState(null);
+  const [open,setOpen]=useState({"A":true});
+  const [msg,setMsg]=useState("");
+  const [pinFor,setPinFor]=useState(null);
+  const [pinInput,setPinInput]=useState("");
+  const [pinErr,setPinErr]=useState("");
+  const locked=config.locked;
+
+  const start=(n)=>{ const base=preds[nameId(n)]||{name:n,scores:{},picks:{},team:"",pin:""}; setName(n); setDraft(JSON.parse(JSON.stringify(base))); setMsg(""); };
+  const requestOpen=(n)=>{ const nm=(n||"").trim(); if(!nm) return;
+    const pred=preds[nameId(nm)];
+    if(pred&&pred.pin&&!locked){ setPinFor(nm); setPinInput(""); setPinErr(""); }
+    else start(nm); };
+  const tryPin=()=>{ const pred=preds[nameId(pinFor)];
+    if(pred&&String(pred.pin)===String(pinInput).trim()){ const n=pinFor; setPinFor(null); setPinInput(""); setPinErr(""); start(n); }
+    else setPinErr("Väärä PIN. Yritä uudelleen."); };
+  const setScore=(id,side,val)=>{ if(!/^[0-9]?$/.test(val))return;
+    setDraft(d=>({...d,scores:{...d.scores,[id]:{...(d.scores[id]||{h:"",a:""}),[side]:val}}})); };
+  const save=async()=>{
+    if(!name.trim()){setMsg("Anna nimi.");return;}
+    if(hasDupCountry(draft)){setMsg("Korjaa: neljä pelaajaa, neljä eri maata.");return;}
+    try{ await db.collection("predictions").doc(nameId(name)).set({...draft,name:name.trim(),pin:(draft.pin||"").trim()}); setMsg(""); toast("Tallennettu ✔"); }
+    catch(e){ setMsg("Virhe: "+e.message); toast("Tallennus epäonnistui","err"); }
+  };
+
+  // PIN-kysely olemassa olevan veikkauksen avaamiseen
+  if(!draft&&pinFor) return (
+    <div className="card">
+      <div className="lab warn">🔒 PIN tarvitaan</div>
+      <h2 style={{fontSize:22,margin:"6px 0 6px"}}>Avaa veikkaus: {pinFor}</h2>
+      <p className="tiny" style={{marginBottom:10}}>Tämä veikkaus on suojattu PIN-koodilla. Syötä se päästäksesi katsomaan ja muokkaamaan.</p>
+      <div className="row wrapf">
+        <input type="password" inputMode="numeric" autoFocus placeholder="PIN" value={pinInput}
+          onChange={e=>setPinInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")tryPin();}} style={{maxWidth:160}}/>
+        <button className="act" onClick={tryPin}>Avaa</button>
+        <button className="ghost" onClick={()=>{setPinFor(null);setPinInput("");setPinErr("");}}>Peruuta</button>
+      </div>
+      {pinErr&&<div className="note warn">{pinErr} Jos olet unohtanut PIN:n, järjestäjä voi nollata sen.</div>}
+    </div>
+  );
+
+  if(!draft) return (
+    <div className="card">
+      <div className="lab">Aloita tästä</div>
+      <h2 style={{fontSize:22,margin:"6px 0 8px"}}>Kuka olet?</h2>
+      <div className="note">Näin veikkaat: kirjoita nimesi, kokoa oma joukkueesi ja veikkaa alkulohkon ottelut. Voit tallentaa ja jatkaa myöhemmin, kunnes veikkaukset lukitaan. Tarkemmat säännöt löydät Säännöt-välilehdeltä.</div>
+      <div className="lab">Uusi veikkaaja</div>
+      <div className="row wrapf" style={{marginTop:6}}>
+        <input placeholder="Nimesi" value={name} onChange={e=>setName(e.target.value)}
+          onKeyDown={e=>{if(e.key==="Enter")requestOpen(name);}} style={{minWidth:200}}/>
+        <button className="act" onClick={()=>requestOpen(name)}>Aloita</button>
+      </div>
+      <p className="tiny" style={{marginTop:6}}>Käytä omaa, tunnistettavaa nimeä (esimerkiksi etunimi ja sukunimen alkukirjain), jottei kahta samannimistä tule sekaisin.</p>
+      {existing.length>0&&<><div className="divider"/><div className="lab">Palaatko muokkaamaan? Valitse nimesi</div>
+        <div className="row wrapf" style={{marginTop:6}}>
+          <select defaultValue="" onChange={e=>{const v=e.target.value; e.target.value=""; if(v)requestOpen(preds[v].name||v);}} style={{minWidth:220}}>
+            <option value="">— valitse nimesi —</option>
+            {existing.map(id=><option key={id} value={id}>{(preds[id].name||id)+(preds[id].pin?" 🔒":"")}</option>)}
+          </select>
+        </div>
+        <p className="tiny" style={{marginTop:8}}>🔒 = veikkaus on suojattu PIN-koodilla.</p></>}
+      {locked&&<div className="note warn">🔒 Veikkaukset on lukittu — voit katsella mutta et muokata.</div>}
+    </div>
+  );
+
+  return (
+    <div>
+      <div className="card">
+        <div className="row between wrapf">
+          <div><div className="lab">Veikkaaja</div><div style={{fontSize:22,fontWeight:800}}>{name}</div></div>
+          <div className="row"><button className="ghost" onClick={()=>{setDraft(null);setMsg("");}}>Vaihda nimeä</button>
+            <button className="act" onClick={save} disabled={locked}>Tallenna</button></div>
+        </div>
+        {!locked&&<div style={{marginTop:10}}><PayPill paid={draft.maksettu} stake={config.stake!=null?config.stake:10} full/></div>}
+        {msg&&<div className="note" style={{marginBottom:0}}>{msg}</div>}
+        {locked&&<div className="note warn">🔒 Veikkaukset on lukittu.</div>}
+      </div>
+
+      {!locked&&<div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>🔒 Oma PIN — suositeltu</div>
+        <p className="tiny" style={{margin:"6px 0 10px"}}>💡 Suosittelemme PIN-koodia. Ilman sitä kuka tahansa voi avata veikkauksesi tällä nimellä ja nähdä tai muuttaa valintojasi ennen lukitusta. PIN pitää veikkauksesi omana tietonasi — aseta se nyt, niin se kysytään aina kun veikkaus avataan.</p>
+        <div className="row wrapf" style={{gap:8}}>
+          <input type="password" inputMode="numeric" placeholder="esim. 1234" disabled={locked}
+            value={draft.pin||""} onChange={e=>setDraft(d=>({...d,pin:e.target.value}))} style={{maxWidth:160}}/>
+          {(draft.pin||"").trim()
+            ? <span className="tiny" style={{color:"var(--teal)"}}>PIN asetettu — muista se! Tyhjennä kenttä poistaaksesi suojan.</span>
+            : <span className="tiny">Valinnainen, mutta suositeltu. Kevyt suoja kurkkimista vastaan (ei vahva salasana).</span>}
+        </div>
+      </div>}
+
+      <div className="card">
+        <div className="lab">Oma joukkue</div>
+        <h2 style={{fontSize:20,margin:"4px 0 8px"}}>Pelaajat (eri maista) & mestari</h2>
+        <p className="tiny" style={{marginBottom:12}}>Valitse jokaiselle pelipaikalle pelaaja ja hänen maansa — neljä pelaajaa, kukin eri maasta. Pelipaikat löydät osoitteesta fifa.com/worldcup.</p>
+        <TeamPicker value={draft} onChange={setDraft} disabled={locked} playerstats={playerstats} showPts={true}/>
+      </div>
+
+      <div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>Näin ottelut pisteytetään</div>
+        <div className="row wrapf" style={{gap:"14px 18px",marginTop:10}}>
+          {[["5 p","täysosuma","g"],["4 p","tulos + toisen maalimäärä","g2"],["3 p","oikea lopputulos","y"],["×2","tuplaottelu","dbl"]].map(([p,d,c],i)=>
+            <span key={i} className="row" style={{gap:8}}><span className={"pill "+c} style={{minWidth:34,textAlign:"center"}}>{p}</span><span style={{fontSize:13}}>{d}</span></span>)}
+        </div>
+      </div>
+
+      {Object.keys(GROUPS).map(g=>(
+        <div className="card" key={g}>
+          <div className="section-h" onClick={()=>setOpen(o=>({...o,[g]:!o[g]}))}>
+            <span>Lohko {g} — {GROUPS[g].join(", ")}</span><span>{open[g]?"–":"+"}</span></div>
+          {open[g]&&matches.filter(m=>m.group===g).map(mt=>{
+            const p=(draft.scores[mt.id])||{h:"",a:""};
+            return <div className="match" key={mt.id}>
+              <div className="tm r">{flag(mt.home)} {mt.home}{mt.dbl&&<span className="pill dbl" style={{marginLeft:6}}>×2</span>}</div>
+              <div className="row" style={{gap:6}}>
+                <input className="sc" inputMode="numeric" disabled={locked} value={p.h} onChange={e=>setScore(mt.id,"h",e.target.value)}/>
+                <span className="mut">–</span>
+                <input className="sc" inputMode="numeric" disabled={locked} value={p.a} onChange={e=>setScore(mt.id,"a",e.target.value)}/>
+              </div>
+              <div className="tm">{flag(mt.away)} {mt.away}</div>
+            </div>;
+          })}
+        </div>
+      ))}
+      {!locked&&<div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>Ennen kuin lähdet</div>
+        <p className="tiny" style={{margin:"6px 0 0",color:"var(--ink)"}}>Voit muuttaa valintojasi lukitukseen asti. Veikkaukset lukitaan <b>11.6.2026 klo 21.00</b> Suomen aikaa, tunti ennen avausottelua. Lukituksen jälkeen valintoja ei voi enää muuttaa.</p>
+        <p className="tiny" style={{margin:"8px 0 0",color:"var(--ink)"}}>Osallistumismaksu on <b>{config.stake!=null?config.stake:10} €</b>. Maksa se MobilePaylla numeroon <b>050 376 7619</b>, viestiksi <b>"mm-veikkaus"</b> ja oma nimesi. Maksun on oltava perillä viimeistään <b>11.6.2026 klo 21.00</b>.</p>
+      </div>}
+      <div style={{textAlign:"center",margin:"18px 0"}}><button className="act" onClick={save} disabled={locked}>Tallenna veikkaus</button>
+        {!locked&&<p className="tiny" style={{marginTop:8}}>Muista tallentaa ennen kuin poistut.</p>}</div>
+    </div>
+  );
+}
+
+/* ===================== KÄRKITAULU ===================== */
+function Cell({pos,pick,teamstats,playerstats,champ,matches}){
+  const country=champ?pick:(pick&&pick.country);
+  const out=country&&teamstats[country]&&teamstats[country].out;
+  const label= champ?"Mestarimaa":POS[pos].label;
+  let nm,pts;
+  if(champ){ nm=pick||"—"; pts=pick?teamPoints(pick,matches,teamstats):0; }
+  else { nm=(pick&&pick.name)||"—"; pts=(pick&&pick.name)?playerPts(pos,playerstats[pkey(pick.name,pick.country)]):0; }
+  return (
+    <div className={"cellbox"+(out?" out":"")}>
+      <div className="nm">{country?<span className="flag">{flag(country)}</span>:null}{nm}</div>
+      <div className="pts">{out?`${signp(pts)} p · tippunut`:`${signp(pts)} p`}</div>
+    </div>
+  );
+}
+function LockedCell(){
+  return (
+    <div className="cellbox" style={{display:"flex",alignItems:"center"}}>
+      <div className="nm" style={{color:"var(--mut)",fontWeight:700}}>🔒 piilossa</div>
+    </div>
+  );
+}
+function PayPill({paid,stake,full}){
+  const base={fontSize:full?13:11,fontWeight:800,padding:full?"6px 13px":"2px 9px",borderRadius:999,display:"inline-flex",alignItems:"center",gap:full?6:4,whiteSpace:"nowrap"};
+  if(paid) return <span style={{...base,background:"rgba(57,229,124,.16)",color:"var(--grn)"}}>✓ Maksu{full?" suoritettu":""}</span>;
+  return <span style={{...base,background:"rgba(255,207,63,.14)",color:"var(--amb)",border:"1px solid var(--amb2)"}}>⧗ Maksu kesken{full?` — ${stake} € · MobilePay 050 376 7619`:""}</span>;
+}
+function eur(x){ if(x==null) return ""; const r=Math.round(x*100)/100; return (r%1===0)?(r+" €"):(r.toFixed(2).replace(".",",")+" €"); }
+function computePrizes(rows,pot){ const tier=[0.6,0.3,0.1]; const n=rows.length; const res=[]; let i=0;
+  while(i<n){ let j=i; while(j+1<n && rows[j+1].total===rows[i].total) j++; let sum=0; for(let p=i;p<=j;p++) sum+=(tier[p]||0)*pot; const each=sum/(j-i+1); for(let k=i;k<=j;k++) res[k]={rank:i+1,prize:each}; i=j+1; } return res; }
+function PotBar({count,played,total,stake}){ const pot=count*stake; const ts=[["1",pot*0.6,60,"g"],["2",pot*0.3,30,"s"],["3",pot*0.1,10,"b"]];
+  return (<div className="potbar">
+    <div><div className="lab">Potti</div><div className="pottot">{eur(pot)}</div></div>
+    <div className="tiers">{ts.map(([r,a,p,c])=><div key={r} className="tier"><span className={"medal "+c}>{r}</span><div><div className="teur">{eur(a)}</div><div className="tiny">{p} %</div></div></div>)}</div>
+  </div>); }
+
+function Karki({preds,scores,matches,playerstats,teamstats,locked,onOpen,stake}){
+  const rows=Object.keys(preds).map(id=>({id,p:preds[id],...scores[id]})).sort((a,b)=>b.total-a.total);
+  if(rows.length===0) return <div className="card"><div className="note">Ei veikkauksia vielä. Täytä omasi “Oma veikkaus” -välilehdellä!</div></div>;
+  const pot=rows.length*(stake||10); const pr=computePrizes(rows,pot);
+  const mcls=(rank)=>rank===1?"g":rank===2?"s":rank===3?"b":null;
+  return (
+    <div>
+      {locked
+        ? <div className="tiny" style={{margin:"-2px 4px 8px"}}>👆 Napauta veikkaajan nimeä → kaikki hänen otteluveikkauksensa ja pisteet.</div>
+        : <div className="note warn">🔒 Muiden pelaaja- ja maavalinnat sekä otteluveikkaukset paljastuvat vasta kun veikkaukset on lukittu (turnauksen alkaessa) — näin kukaan ei voi kopioida toisten valintoja.</div>}
+
+      {/* LEVEÄ PÖYTÄ */}
+      <div className="card lb-wide" style={{overflowX:"auto"}}>
+        <table className="lbtable">
+          <thead><tr><th>#</th><th>Veikkaaja</th><th>Yht</th>{!locked&&<th>Maksu</th>}<th>Maalivahti</th><th>Puolustaja</th><th>Keskikenttä</th><th>Hyökkääjä</th><th>Mestarimaa</th></tr></thead>
+          <tbody>
+          {rows.map((r,i)=>{ const m=mcls(pr[i].rank); return (
+            <tr key={r.id} className={i===0?"top":""} style={{cursor:locked?"pointer":"default"}} onClick={()=>locked&&onOpen(r.id)}>
+              <td><span className={"rank"+(i===0?" gold":"")}>{pr[i].rank}</span></td>
+              <td><div className="nm-tot"><span style={{fontWeight:800,fontSize:16,display:"inline-flex",alignItems:"center",gap:6}}>{r.p.name||r.id}{m&&<span className={"medal "+m}>{pr[i].rank}</span>}{locked&&<span className="chev">›</span>}</span><span className="tiny">alkulohko {r.mp} p · joukkue {r.pp+r.tp} p</span></div></td>
+              <td><span className="tot" style={{color:i===0?"var(--grn)":"var(--ink)"}}>{r.total}</span></td>
+              {!locked&&<td><PayPill paid={r.p.maksettu}/></td>}
+              {POS_ORDER.map(pos=><td key={pos}>{locked?<Cell pos={pos} pick={r.p.picks&&r.p.picks[pos]} teamstats={teamstats} playerstats={playerstats}/>:<LockedCell/>}</td>)}
+              <td>{locked?<Cell champ pick={r.p.team} teamstats={teamstats} playerstats={playerstats} matches={matches}/>:<LockedCell/>}</td>
+            </tr>
+          );})}
+          </tbody>
+        </table>
+      </div>
+
+      {/* KOMPAKTIT KORTIT */}
+      <div className="lb-cards">
+        {rows.map((r,i)=>{ const m=mcls(pr[i].rank); const t=r.p.team; const tout=t&&teamstats[t]&&teamstats[t].out; return (
+          <div key={r.id} className={"pcard"+(i===0?" top":"")} style={{cursor:locked?"pointer":"default"}} onClick={()=>locked&&onOpen(r.id)}>
+            {i===0&&<div className="bar"/>}
+            <div className="chd">
+              <span className={"rank"+(i===0?" gold":"")}>{pr[i].rank}</span>
+              <span className="cflag" style={tout?{opacity:.4,filter:"grayscale(1)"}:null}>{locked?flag(t):<span style={{fontSize:16}}>🔒</span>}</span>
+              <div className="nmcol"><span className="cname">{r.p.name||r.id}{m&&<span className={"medal "+m}>{pr[i].rank}</span>}{locked&&<span className="chev">›</span>}</span>{!locked&&<div style={{marginTop:5}}><PayPill paid={r.p.maksettu}/></div>}{tout&&<div className="tiny">mestari tippunut</div>}</div>
+              <div style={{textAlign:"right"}}><div className="tot" style={{fontSize:26,color:i===0?"var(--grn)":"var(--ink)"}}>{r.total}</div><div className="tiny">yhteensä</div></div>
+            </div>
+            <div className="jrow"><span className="jpill">Ottelut {r.mp} p</span><span className="jpill">Joukkue {r.pp+r.tp} p</span></div>
+          </div>
+        );})}
+      </div>
+    </div>
+  );
+}
+
+/* ===================== LIVE-SEURANTA ===================== */
+function Live({matches,preds,today}){
+  const [exp,setExp]=useState({});
+  const played=matches.filter(m=>m.hg!==""&&m.hg!=null);
+  const upcoming=matches.filter(m=>m.hg===""||m.hg==null);
+  if(played.length===0&&upcoming.length===0) return null;
+  const last=[...played].sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:b.id-a.id).slice(0,3);
+  const next=[...upcoming].sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.id-b.id).slice(0,3);
+  const names=Object.keys(preds);
+  const results=(m)=>names.map(id=>({n:preds[id].name||id,pr:preds[id].scores&&preds[id].scores[m.id],pt:matchPoints(preds[id].scores&&preds[id].scores[m.id],m)})).filter(z=>z.pr&&z.pr.h!==""&&z.pt!=null).sort((a,b)=>b.pt-a.pt);
+  const predsFor=(m)=>names.map(id=>({n:preds[id].name||id,pr:preds[id].scores&&preds[id].scores[m.id]})).filter(x=>x.pr&&x.pr.h!=="");
+  return (<div className="livewrap">
+    {last.length>0&&<div className="card">
+      <div className="lab" style={{color:"var(--blue2)"}}>Edelliset ottelut</div>
+      {last.map(m=>{const rs=results(m);const open=exp["L"+m.id];const show=open?rs:rs.slice(0,3);const rest=rs.length-show.length;return <div key={m.id} className="liverow">
+        <div className="row between"><div className="tm">{flag(m.home)} {m.home} <span className="mut">–</span> {flag(m.away)} {m.away}{m.dbl&&<span className="pill dbl" style={{marginLeft:6}}>×2</span>}</div>
+          <div className="mono" style={{fontSize:17}}>{m.hg}–{m.ag}</div></div>
+        <div className="row wrapf" style={{gap:6,marginTop:5}}>
+          <span className="tiny" style={{marginRight:2}}>{dateLabel(m.date,today)} ·</span>
+          {rs.length===0?<span className="tiny">ei veikkauksia</span>:show.map((z,i)=>{const base=m.dbl?z.pt/2:z.pt;const cls=base>=5?"g":base===4?"g2":base===3?"y":"z";return <span key={i} className={"pill "+cls}>{z.pt}p {z.n}</span>;})}
+          {rs.length>3&&<span className="morechip" onClick={()=>setExp(e=>({...e,["L"+m.id]:!open}))}>{open?"▴ vähemmän":"+"+rest+" ▾"}</span>}
+        </div></div>;})}
+    </div>}
+    {next.length>0&&<div className="card">
+      <div className="lab" style={{color:"var(--blue2)"}}>Seuraavat ottelut</div>
+      {next.map(m=>{const psl=predsFor(m);const open=exp[m.id];const show=open?psl:psl.slice(0,3);const rest=psl.length-show.length;
+        return <div key={m.id} className="liverow">
+        <div className="row between"><div className="tm">{flag(m.home)} {m.home} <span className="mut">–</span> {flag(m.away)} {m.away}{m.dbl&&<span className="pill dbl" style={{marginLeft:6}}>×2</span>}</div>
+          <span className="tiny" style={{color:"var(--teal)",fontWeight:700}}>{dateLabel(m.date,today)}</span></div>
+        <div className="row wrapf" style={{gap:6,marginTop:6}}>
+          {psl.length===0?<span className="tiny">ei veikkauksia</span>:show.map((x,i)=><span key={i} className="predchip">{x.n} <span className="s">{x.pr.h}-{x.pr.a}</span></span>)}
+          {psl.length>3&&<span className="morechip" onClick={()=>setExp(e=>({...e,[m.id]:!open}))}>{open?"▴ vähemmän":"+"+rest+" ▾"}</span>}
+        </div></div>;})}
+    </div>}
+  </div>);
+}
+
+/* ===================== PISTEPÖRSSI (valitut pelaajat) ===================== */
+function Porssi({preds,playerstats}){
+  const [open,setOpen]=useState(false);
+  const names=Object.keys(preds);
+  const map={};
+  names.forEach(id=>POS_ORDER.forEach(pos=>{ const pk=preds[id].picks&&preds[id].picks[pos];
+    if(pk&&pk.name){ const kk=pkey(pk.name,pk.country)+"__"+pos;
+      if(!map[kk]) map[kk]={name:pk.name,country:pk.country,pos,tally:playerstats[pkey(pk.name,pk.country)]||{},pickers:[]};
+      map[kk].pickers.push(preds[id].name||id); } }));
+  let arr=Object.values(map).map(v=>({...v,pts:playerPts(v.pos,v.tally)})).filter(v=>v.pts!==0);
+  if(arr.length===0) return null;
+  arr.sort((a,b)=>b.pts-a.pts || (a.country||"").localeCompare(b.country||"","fi") || (a.name||"").localeCompare(b.name||"","fi"));
+  const show=open?arr:arr.slice(0,5); const rest=arr.length-show.length;
+  const parts=(v)=>{ const k=POS[v.pos],t=v.tally,out=[];
+    const g=Number(t.goal||0); if(g&&k.goal) out.push([g+" "+(g===1?"maali":"maalia"),g*k.goal]);
+    const a=Number(t.assist||0); if(a&&k.assist) out.push([a+" "+(a===1?"syöttö":"syöttöä"),a*k.assist]);
+    const c=Number(t.cs||0); if(c&&k.cs) out.push([c+" "+(c===1?"nollapeli":"nollapeliä"),c*k.cs]);
+    const r=Number(t.red||0); if(r) out.push([r+" "+(r===1?"punainen kortti":"punaista korttia"),r*k.red]);
+    const o=Number(t.og||0); if(o) out.push([o+" "+(o===1?"oma maali":"omaa maalia"),o*k.og]);
+    return out; };
+  return (<div className="card">
+    <div className="lab" style={{color:"var(--blue2)"}}>Pistepörssi — valitut pelaajat</div>
+    {show.map((v,i)=>{ const ch=parts(v); return (
+      <div key={i} className="liverow">
+        <div className="row between" style={{alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:9,minWidth:0}}>
+            <span className={"rank"+(i===0?" gold":"")} style={{minWidth:22,textAlign:"center"}}>{i+1}</span>
+            <div style={{minWidth:0}}><span style={{fontWeight:800,fontSize:15}}>{flag(v.country)} {v.name}</span> <span className="tiny" style={{textTransform:"uppercase",letterSpacing:".04em"}}>· {POS[v.pos].label}</span></div>
+          </div>
+          <span className="mono" style={{fontSize:18,fontWeight:700,color:v.pts<0?"var(--red)":"var(--teal)"}}>{signp(v.pts)} p</span>
+        </div>
+        <div className="row wrapf" style={{gap:6,marginTop:5}}>
+          {ch.map((c,j)=><span key={j} style={{fontSize:12,fontWeight:700,borderRadius:8,padding:"3px 9px",background:c[1]<0?"rgba(255,93,82,.13)":"rgba(57,229,124,.12)",color:c[1]<0?"var(--red)":"var(--teal)"}}>{c[0]} · {signp(c[1])}</span>)}
+        </div>
+        <div className="tiny" style={{marginTop:6}}>Valinnut: {v.pickers.join(", ")}</div>
+      </div>
+    );})}
+    {arr.length>5&&<div style={{textAlign:"center",marginTop:10}}><span className="morechip" onClick={()=>setOpen(o=>!o)}>{open?"▴ vähemmän":"+"+rest+" ▾"}</span></div>}
+  </div>);
+}
+function Kortti({p,sc,matches,teamstats,playerstats,onBack}){
+  const [open,setOpen]=useState({});
+  return (<div>
+    <div className="card">
+      <button className="ghost" onClick={onBack}>‹ Tulostaulukko</button>
+      <div className="row between wrapf" style={{marginTop:10}}>
+        <h2 style={{fontSize:26}}>{p.name}</h2>
+        <div style={{textAlign:"right"}}><div className="tot" style={{fontSize:28,color:"var(--grn)"}}>{sc.total}</div><div className="tiny">yhteensä</div></div>
+      </div>
+      <div className="row wrapf" style={{gap:8,marginTop:6}}>
+        {[["Alkulohko",sc.mp],["Pelaajat",sc.pp],["Mestari",sc.tp]].map(([l,v])=>
+          <span key={l} className="tiny" style={{border:"1px solid var(--line)",borderRadius:13,padding:"5px 10px"}}>{l} {v} p</span>)}
+      </div>
+      <div className="divider"/>
+      <div className="lab">Joukkue</div>
+      {POS_ORDER.map(pos=>{const pk=p.picks&&p.picks[pos];const country=pk&&pk.country;const out=country&&teamstats[country]&&teamstats[country].out;
+        const pts=(pk&&pk.name)?playerPts(pos,playerstats[pkey(pk.name,pk.country)]):0;
+        return <div key={pos} className={"prow"+(out?" out":"")}><span className="poslab">{POS[pos].label}</span>
+          <span style={{fontWeight:700}}>{country?<span className="flag">{flag(country)}</span>:null}{(pk&&pk.name)||"—"}</span>
+          <span className="mono" style={{color:out?"var(--grey)":"var(--teal)",fontSize:13}}>{out?`${signp(pts)} p · tippunut`:`${signp(pts)} p`}</span></div>;})}
+      {(()=>{const t=p.team;const out=t&&teamstats[t]&&teamstats[t].out;const pts=t?teamPoints(t,matches,teamstats):0;
+        return <div className={"prow champ"+(out?" out":"")}><span className="poslab">Mestarimaa</span>
+          <span style={{fontWeight:700}}>{t?<span className="flag">{flag(t)}</span>:null}{t||"—"}</span>
+          <span className="mono" style={{color:out?"var(--grey)":"var(--teal)",fontSize:13}}>{out?`${signp(pts)} p · tippunut`:`${signp(pts)} p`}</span></div>;})()}
+    </div>
+    {Object.keys(GROUPS).map(g=>{
+      const ms=matches.filter(m=>m.group===g);
+      return <div className="card" key={g}>
+        <div className="section-h" onClick={()=>setOpen(o=>({...o,[g]:!o[g]}))}><span>Lohko {g} — {GROUPS[g].join(", ")}</span><span>{open[g]?"–":"+"}</span></div>
+        {open[g]&&ms.map(mt=>{
+          const pr=p.scores&&p.scores[mt.id]; const played=mt.hg!==""&&mt.hg!=null;
+          const pt=matchPoints(pr,mt); const base=(played&&pt!=null)?(mt.dbl?pt/2:pt):null;
+          const cls=base==null?"":base>=5?"g":base===4?"g2":base===3?"y":"z";
+          return <div key={mt.id} style={{padding:"9px 0",borderBottom:"1px dashed var(--line)"}}>
+            <div className="row between">
+              <div className="tm">{flag(mt.home)} {mt.home} <span className="mut">–</span> {flag(mt.away)} {mt.away}{mt.dbl&&<span className="pill dbl" style={{marginLeft:6}}>×2</span>}</div>
+              {(played&&pt!=null)?<span className={"pill "+cls}>{pt} p</span>:<span className="tiny">–</span>}
+            </div>
+            <div className="tiny" style={{marginTop:2}}>veikkaus {pr?`${pr.h}–${pr.a}`:"—"} · {played?`tulos ${mt.hg}–${mt.ag}`:"ei vielä pelattu"}</div>
+          </div>;
+        })}
+      </div>;
+    })}
+  </div>);
+}
+
+/* ===================== OTTELUT ===================== */
+function Ottelut({matches,preds,locked}){
+  const today=todayISO();
+  const names=Object.keys(preds).sort((a,b)=>(preds[a].name||"").localeCompare(preds[b].name||"","fi"));
+  const dates=useMemo(()=>[...new Set(matches.map(m=>m.date))].sort(),[matches]);
+  const defaultDay=useMemo(()=>dates.find(d=>d>=today)||dates[dates.length-1],[dates,today]);
+  const [view,setView]=useState("lohko");
+  const [open,setOpen]=useState({});
+  const [openDay,setOpenDay]=useState(()=>({[defaultDay]:true}));
+  const [expPred,setExpPred]=useState({});
+  const dayTitle=(ds)=>{ const d=new Date(ds+"T12:00:00"); const f=WD[d.getDay()]+" "+d.getDate()+"."+(d.getMonth()+1)+"."; const rel=dateLabel(ds,today); return rel===f?f:rel+" · "+f; };
+  const matchBlock=(mt)=>{
+    const done=mt.hg!==""&&mt.ag!==""&&mt.hg!=null&&mt.ag!=null;
+    const predList=(!done&&locked)?names.map(id=>({n:preds[id].name||id,pr:preds[id].scores&&preds[id].scores[mt.id]})).filter(x=>x.pr&&x.pr.h!==""&&x.pr.a!==""):[];
+    const op=expPred[mt.id]; const showP=op?predList:predList.slice(0,3); const restP=predList.length-showP.length;
+    return <div key={mt.id} style={{padding:"10px 0",borderBottom:"1px dashed var(--line)"}}>
+      <div className="row between">
+        <div className="tm">{flag(mt.home)} {mt.home} <span className="mut">vs</span> {flag(mt.away)} {mt.away}{mt.dbl&&<span className="pill dbl" style={{marginLeft:6}}>×2</span>}</div>
+        <div className="mono" style={{fontSize:17}}>{done?`${mt.hg}–${mt.ag}`:"– : –"}</div>
+      </div>
+      {done&&<div className="row wrapf" style={{gap:6,marginTop:6}}>
+        {names.map(id=>{ const pr=preds[id].scores&&preds[id].scores[mt.id]; const pt=matchPoints(pr,mt);
+          if(!pr||pr.h===""||pr.a==="") return null;
+          const base=mt.dbl?pt/2:pt; const cls=base>=5?"g":base===4?"g2":base===3?"y":"z";
+          return <span key={id} className={"pill "+cls}>{preds[id].name||id} {pr.h}-{pr.a} · {pt}p</span>; })}
+      </div>}
+      {!done&&locked&&<div className="row wrapf" style={{gap:6,marginTop:6}}>
+        {predList.length===0?<span className="tiny">ei veikkauksia</span>:showP.map((x,i)=><span key={i} className="predchip">{x.n} <span className="s">{x.pr.h}-{x.pr.a}</span></span>)}
+        {predList.length>3&&<span className="morechip" onClick={()=>setExpPred(e=>({...e,[mt.id]:!op}))}>{op?"▴ vähemmän":"+"+restP+" ▾"}</span>}
+      </div>}
+    </div>;
+  };
+  return (
+    <div>
+      <div className="card"><div className="note">Täysosuma 5 p · lopputulos + toisen maalimäärä 4 p · pelkkä lopputulos 3 p · tuplaottelu ×2. Tarkemmat säännöt Säännöt-välilehdellä.</div>
+        <div className="row" style={{gap:10,marginTop:4}}>
+          <span className="tiny" style={{fontWeight:700}}>Näkymä:</span>
+          <div className="seg">
+            <button className={"segb"+(view==="lohko"?" on":"")} onClick={()=>setView("lohko")}>Lohkoittain</button>
+            <button className={"segb"+(view==="paiva"?" on":"")} onClick={()=>setView("paiva")}>Päivittäin</button>
+          </div>
+        </div>
+      </div>
+
+      {view==="lohko" && Object.keys(GROUPS).map(g=>(
+        <div className="card" key={g}>
+          <div className="section-h" onClick={()=>setOpen(o=>({...o,[g]:!o[g]}))}><span>Lohko {g} — {GROUPS[g].join(", ")}</span><span>{open[g]?"–":"+"}</span></div>
+          {open[g]&&matches.filter(m=>m.group===g).map(matchBlock)}
+        </div>
+      ))}
+
+      {view==="paiva" && dates.map(ds=>{ const isToday=ds===today; const dms=matches.filter(m=>m.date===ds);
+        return <div className="card" key={ds} style={isToday?{borderColor:"#3a47a8"}:null}>
+          <div className="section-h" onClick={()=>setOpenDay(o=>({...o,[ds]:!o[ds]}))}>
+            <span>{dayTitle(ds)}{isToday&&<span className="todaytag">TÄNÄÄN</span>}</span>
+            <span>{openDay[ds]?"–":"+"}</span>
+          </div>
+          {openDay[ds]&&dms.map(matchBlock)}
+        </div>;
+      })}
+    </div>
+  );
+}
+
+/* ===================== SÄÄNNÖT ===================== */
+function Saannot({stake}){
+  const otterivit=[["5 p","täysosuma (oikea lopputulos ja molemmat maalimäärät)","g"],
+    ["4 p","oikea lopputulos ja toisen joukkueen maalimäärä oikein","g2"],
+    ["3 p","oikea lopputulos, mutta molemmat maalimäärät väärin","y"],
+    ["0 p","väärä lopputulos","z"]];
+  return (
+    <div>
+      <div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>Näin veikkaat</div>
+        <p style={{margin:"6px 0 0"}}>Kirjoita nimesi Oma veikkaus -välilehdellä, kokoa oma joukkueesi ja veikkaa alkulohkon ottelut. Voit tallentaa ja jatkaa myöhemmin, kunnes järjestäjä lukitsee veikkaukset turnauksen alkaessa.</p>
+      </div>
+
+      <div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>Osallistumismaksu</div>
+        <p style={{margin:"6px 0 0"}}>Osallistumismaksu on {stake} €. Maksa se MobilePaylla numeroon <b>050 376 7619</b>. Kirjoita viestiksi <b>"mm-veikkaus"</b> ja oma käyttäjänimesi. Maksun on oltava perillä viimeistään <b>11.6.2026 klo 21.00</b>.</p>
+      </div>
+
+      <div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>Otteluveikkaukset</div>
+        <p className="tiny" style={{margin:"6px 0 8px"}}>Vain alkulohko, 72 ottelua.</p>
+        {otterivit.map(([p,d,c],i)=>
+          <div key={i} className="row" style={{gap:10,padding:"5px 0"}}>
+            <span className={"pill "+c} style={{minWidth:34,textAlign:"center"}}>{p}</span>
+            <span style={{fontSize:14}}>{d}</span>
+          </div>)}
+        <p className="tiny" style={{marginTop:8}}>Tuplaotteluksi merkityssä ottelussa pisteet kaksinkertaistuvat (×2).</p>
+      </div>
+
+      <div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>Oma joukkue</div>
+        <p style={{margin:"6px 0 8px"}}>Valitse neljä pelaajaa, kukin eri maasta: maalivahti, puolustaja, keskikenttäpelaaja ja hyökkääjä. Valitse lisäksi mestarijoukkue.</p>
+        <div style={{overflowX:"auto"}}>
+          <table className="lbtable" style={{minWidth:340}}>
+            <thead><tr><th>Tapahtuma</th>{POS_ORDER.map(p=><th key={p} style={{textAlign:"center"}}>{p}</th>)}</tr></thead>
+            <tbody>
+              <tr><td>0-peli</td>{POS_ORDER.map(p=><td key={p} style={{textAlign:"center"}}>{POS[p].cs?POS[p].cs+" p":"–"}</td>)}</tr>
+              <tr><td>Maali</td>{POS_ORDER.map(p=><td key={p} style={{textAlign:"center"}}>{POS[p].goal} p</td>)}</tr>
+              <tr><td>Syöttö</td>{POS_ORDER.map(p=><td key={p} style={{textAlign:"center"}}>{POS[p].assist} p</td>)}</tr>
+              <tr><td>Punainen kortti</td>{POS_ORDER.map(p=><td key={p} style={{textAlign:"center"}}>{POS[p].red} p</td>)}</tr>
+              <tr><td>Oma maali</td>{POS_ORDER.map(p=><td key={p} style={{textAlign:"center"}}>{POS[p].og} p</td>)}</tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="tiny" style={{marginTop:8}}>MV = maalivahti, P = puolustaja, KK = keskikenttäpelaaja, H = hyökkääjä. 0-peli = pelaajan joukkue ei päästä ottelussa maalia.</p>
+        <p className="tiny" style={{marginTop:6}}>Mestarijoukkue: {WIN_POINTS} p / voitto ja {CHAMP_POINTS} p mestaruudesta. Ryhmävaiheen voitot lasketaan automaattisesti ottelutuloksista.</p>
+      </div>
+
+      <div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>Potti ja palkinnot</div>
+        <p style={{margin:"6px 0 0"}}>Palkinnot jaetaan: 1. sija 60 %, 2. sija 30 % ja 3. sija 10 %. Tasatilanteessa kyseisten sijojen palkinnot jaetaan tasan.</p>
+      </div>
+
+      <div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>Lukitus ja yksityisyys</div>
+        <p style={{margin:"6px 0 0"}}>Veikkaukset lukitaan 11.6.2026 klo 21.00 Suomen aikaa, tunti ennen avausottelua (Meksiko–Etelä-Afrikka klo 22.00). Lukituksen jälkeen valintoja ei voi enää muuttaa, ja kaikkien valinnat tulevat näkyviin. Voit suojata oman veikkauksesi PIN-koodilla. Ennen lukitusta muiden pelaaja- ja maavalinnat sekä otteluveikkaukset ovat piilossa, jottei niitä voi kopioida.</p>
+      </div>
+    </div>
+  );
+}
+
+/* ===================== JÄRJESTÄJÄ ===================== */
+function Admin({matches,preds,config,teamstats,playerstats}){
+  const [pin,setPin]=useState(""); const [ok,setOk]=useState(!config.pin);
+  if(!ok) return (
+    <div className="card"><div className="lab">Vain järjestäjälle</div>
+      <h2 style={{fontSize:20,margin:"6px 0 10px"}}>Syötä PIN</h2>
+      <div className="row wrapf"><input type="password" value={pin} onChange={e=>setPin(e.target.value)} placeholder="PIN"/>
+      <button className="act" onClick={()=>setOk(pin===config.pin)}>Avaa</button></div>
+      {pin&&pin!==config.pin&&<div className="note warn">Väärä PIN.</div>}</div>
+  );
+  return <AdminPanel matches={matches} preds={preds} config={config} teamstats={teamstats} playerstats={playerstats}/>;
+}
+
+function AdminPanel({matches,preds,config,teamstats,playerstats}){
+  const [open,setOpen]=useState({tools:true});
+  const [mDraft,setMDraft]=useState(matches);
+  useEffect(()=>{setMDraft(matches);},[matches]);
+  const fl=(t)=>toast(t, /virhe/i.test(t)?"err":"");
+  const upM=(id,patch)=>setMDraft(ms=>ms.map(m=>m.id===id?{...m,...patch}:m));
+  const saveM=async()=>{
+    const filled=a=>(a||[]).filter(m=>m.hg!==""&&m.hg!=null&&m.ag!==""&&m.ag!=null).length;
+    const before=filled(matches), after=filled(mDraft);
+    if(before-after>=3){
+      if(!window.confirm("Huom: tämä tallennus näyttää tyhjentävän "+(before-after)+" jo syötettyä tulosta. Jos et tarkoittanut tätä, peruuta ja lataa sivu uudelleen (Ctrl+F5). Tallennetaanko silti?")) return;
+    }
+    try{await docRef("matches").set({list:mDraft});fl("Tulokset tallennettu");}catch(e){fl("Virhe: "+e.message);}
+  };
+
+  // pelaajatilastot
+  const picked=useMemo(()=>{ const map={};
+    Object.values(preds).forEach(p=>POS_ORDER.forEach(pos=>{ const pk=p.picks&&p.picks[pos];
+      if(pk&&pk.name){ const k=pkey(pk.name,pk.country); (map[k]=map[k]||{name:pk.name,country:pk.country,pos:new Set()}).pos.add(pos);} }));
+    return Object.entries(map).map(([k,v])=>({k,...v,pos:[...v.pos]}))
+      .sort((a,b)=>{ const c=(a.country||"").localeCompare(b.country||"","fi"); if(c!==0) return c;
+        const pa=Math.min(...a.pos.map(p=>POS_ORDER.indexOf(p))), pb=Math.min(...b.pos.map(p=>POS_ORDER.indexOf(p)));
+        if(pa!==pb) return pa-pb; return (a.name||"").localeCompare(b.name||"","fi"); }); },[preds]);
+  const [psDraft,setPsDraft]=useState(playerstats);
+  useEffect(()=>{setPsDraft(playerstats);},[playerstats]);
+  const setStat=(k,f,v)=>{ if(!/^[0-9]{0,2}$/.test(v))return; setPsDraft(s=>({...s,[k]:{...(s[k]||{}),[f]:v}})); };
+  const psFilled=map=>Object.keys(map||{}).filter(k=>Object.values(map[k]||{}).some(v=>v!==""&&v!=null&&Number(v)>0)).length;
+  const savePs=async()=>{
+    const before=psFilled(playerstats), after=psFilled(psDraft);
+    if(before-after>=3){
+      if(!window.confirm("Huom: tämä tallennus näyttää tyhjentävän "+(before-after)+" pelaajan jo syötetyt tilastot. Jos et tarkoittanut tätä, peruuta ja lataa sivu uudelleen (Ctrl+F5). Tallennetaanko silti?")) return;
+    }
+    try{await docRef("playerstats").set({map:psDraft});fl("Pelaajatilastot tallennettu");}catch(e){fl("Virhe: "+e.message);}
+  };
+
+  // joukkuetilastot + tippuminen
+  const [tsDraft,setTsDraft]=useState(teamstats);
+  useEffect(()=>{setTsDraft(teamstats);},[teamstats]);
+  const setTeam=(t,f,v)=>setTsDraft(s=>({...s,[t]:{...(s[t]||{}),[f]:v}}));
+  const champTeams=[...new Set(Object.values(preds).map(p=>p.team).filter(Boolean))];
+  const tsFilled=map=>Object.keys(map||{}).filter(t=>{const x=map[t]||{};return (Number(x.wins)>0)||x.champ||x.out;}).length;
+  const saveTs=async()=>{
+    const before=tsFilled(teamstats), after=tsFilled(tsDraft);
+    if(before-after>=3){
+      if(!window.confirm("Huom: tämä tallennus näyttää tyhjentävän "+(before-after)+" joukkueen jo syötetyt tiedot. Jos et tarkoittanut tätä, peruuta ja lataa sivu uudelleen (Ctrl+F5). Tallennetaanko silti?")) return;
+    }
+    try{await docRef("teamstats").set({map:tsDraft});fl("Joukkuetiedot tallennettu");}catch(e){fl("Virhe: "+e.message);}
+  };
+
+  // muiden korjaus
+  const [editId,setEditId]=useState("");
+  const [editDraft,setEditDraft]=useState(null);
+  const [delId,setDelId]=useState("");
+  const [resetId,setResetId]=useState("");
+  const setPaid=async(id,val)=>{ try{ await db.collection("predictions").doc(id).set({maksettu:val},{merge:true}); fl(val?"Merkitty maksetuksi":"Maksu poistettu"); }catch(e){ fl("Virhe: "+e.message); } };
+  const startEdit=(id)=>{ setEditId(id); setEditDraft(JSON.parse(JSON.stringify({picks:{},team:"",...preds[id]}))); };
+  const saveEdit=async()=>{ if(hasDupCountry(editDraft)){fl("Neljä eri maata!");return;}
+    try{await db.collection("predictions").doc(editId).set(editDraft);fl("Osallistujan valinnat tallennettu");}catch(e){fl("Virhe: "+e.message);} };
+  const doDelete=async()=>{ if(!delId) return; const nm=(preds[delId]&&preds[delId].name)||delId; if(!window.confirm("Poistetaanko veikkaaja \""+nm+"\" pysyvästi? Tätä ei voi perua.")) return;
+    try{ await db.collection("predictions").doc(delId).delete(); setDelId(""); fl("Veikkaaja poistettu"); }catch(e){ fl("Virhe: "+e.message); } };
+  const doResetPin=async()=>{ if(!resetId) return; const nm=(preds[resetId]&&preds[resetId].name)||resetId;
+    if(!window.confirm("Nollataanko veikkaajan \""+nm+"\" PIN? Sen jälkeen veikkauksen voi avata ilman PIN:iä.")) return;
+    try{ await db.collection("predictions").doc(resetId).set({pin:""},{merge:true}); setResetId(""); fl("PIN nollattu"); }catch(e){ fl("Virhe: "+e.message); } };
+
+  return (
+    <div>
+      <div className="card">
+        <div className="section-h" onClick={()=>setOpen(o=>({...o,tools:!o.tools}))}><span>Asetukset</span><span>{open.tools?"–":"+"}</span></div>
+        {open.tools&&<div>
+          <label className="row" style={{gap:8}}>
+            <input type="checkbox" style={{width:18,height:18}} checked={!!config.locked}
+              onChange={async e=>{try{await docRef("config").set({locked:e.target.checked},{merge:true});fl("Tallennettu");}catch(x){fl(x.message);}}}/>
+            <span>Lukitse veikkaukset (esim. avausottelun alkaessa)</span></label>
+          <div className="divider"/>
+          <div className="lab">Järjestäjän PIN</div>
+          <div className="row wrapf" style={{marginTop:6}}>
+            <input placeholder="aseta PIN" defaultValue={config.pin}
+              onBlur={async e=>{try{await docRef("config").set({pin:e.target.value},{merge:true});fl("PIN tallennettu");}catch(x){fl(x.message);}}}/>
+            <span className="tiny">Kevyt suoja kaveriporukalle, ei tietoturvaa.</span></div>
+          <div className="divider"/>
+          <div className="lab">Panostus per osallistuja (€)</div>
+          <div className="row wrapf" style={{marginTop:6}}>
+            <input type="number" min="0" step="1" style={{width:120}} defaultValue={config.stake!=null?config.stake:10}
+              onBlur={async e=>{try{await docRef("config").set({stake:Number(e.target.value)||0},{merge:true});fl("Panostus tallennettu");}catch(x){fl(x.message);}}}/>
+            <span className="tiny">Potti & palkinnot (60/30/10 %) lasketaan tästä ja osallistujamäärästä.</span></div>
+        </div>}
+      </div>
+
+      {/* TULOKSET */}
+      <div className="card">
+        <div className="lab">Ottelutulokset</div>
+        <h2 style={{fontSize:18,margin:"4px 0 8px"}}>Maalit & tuplaottelu</h2>
+        {Object.keys(GROUPS).map(g=>(
+          <div key={g}>
+            <div className="section-h" onClick={()=>setOpen(o=>({...o,["m"+g]:!o["m"+g]}))}><span>Lohko {g} — {GROUPS[g].join(", ")}</span><span>{open["m"+g]?"–":"+"}</span></div>
+            {open["m"+g]&&mDraft.filter(m=>m.group===g).map(mt=>(
+              <div key={mt.id} style={{padding:"8px 0",borderBottom:"1px dashed var(--line)"}}>
+                <div className="row wrapf" style={{gap:6}}>
+                  <div className="tm r" style={{flex:1}}>{flag(mt.home)} {mt.home}</div>
+                  <input className="sc" inputMode="numeric" value={mt.hg} onChange={e=>/^[0-9]?$/.test(e.target.value)&&upM(mt.id,{hg:e.target.value})}/>
+                  <span>–</span>
+                  <input className="sc" inputMode="numeric" value={mt.ag} onChange={e=>/^[0-9]?$/.test(e.target.value)&&upM(mt.id,{ag:e.target.value})}/>
+                  <div className="tm" style={{flex:1}}>{flag(mt.away)} {mt.away}</div>
+                  <label className="row tiny" style={{gap:4}}><input type="checkbox" checked={!!mt.dbl} onChange={e=>upM(mt.id,{dbl:e.target.checked})}/>×2</label>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+        <div style={{textAlign:"center",marginTop:12}}><button className="act" onClick={saveM}>Tallenna tulokset</button></div>
+      </div>
+
+      {/* PELAAJATILASTOT */}
+      <div className="card">
+        <div className="lab">Pelaajatilastot</div>
+        <h2 style={{fontSize:18,margin:"4px 0 8px"}}>Vain valitut pelaajat</h2>
+        {picked.length===0?<div className="note">Kukaan ei ole vielä valinnut pelaajia.</div>:<>
+          <div className="statline head"><span>Pelaaja</span><span>0-peli</span><span>Maali</span><span>Syöttö</span><span>Pun.k.</span><span>Oma m.</span></div>
+          {picked.map(pp=>{ const t=psDraft[pp.k]||{};
+            return <div className="statline" key={pp.k}>
+              <span style={{fontWeight:700}}><span className="flag">{flag(pp.country)}</span>{pp.name} <span className="tiny">({pp.pos.join(",")})</span></span>
+              {["cs","goal","assist","red","og"].map(f=><input key={f} inputMode="numeric" value={t[f]||""} placeholder="0" onChange={e=>setStat(pp.k,f,e.target.value)}/>)}
+            </div>; })}
+          <div style={{textAlign:"center",marginTop:12}}><button className="act" onClick={savePs}>Tallenna pelaajatilastot</button></div>
+        </>}
+      </div>
+
+      {/* JOUKKUEET: VOITOT / MESTARUUS */}
+      <div className="card">
+        <div className="lab">Mestarijoukkueet</div>
+        <h2 style={{fontSize:18,margin:"4px 0 8px"}}>Voitot & mestaruus</h2>
+        <div className="note">Ryhmävaiheen voitot lasketaan automaattisesti tallennetuista ottelutuloksista (5 p/voitto). Lisää alle vain mahdolliset pudotuspelivoitot ja merkitse lopulta mestari (10 p).</div>
+        {champTeams.length===0?<div className="note">Kukaan ei ole vielä valinnut mestarijoukkuetta.</div>:<>
+          {champTeams.map(t=>{ const ts=tsDraft[t]||{}; const aw=autoGroupWins(t,matches);
+            return <div className="row between wrapf" key={t} style={{padding:"8px 0",borderBottom:"1px dashed var(--line)",gap:10}}>
+              <span style={{fontWeight:700,flex:1}}><span className="flag">{flag(t)}</span>{t} <span className="tiny" style={{fontWeight:400}}>· ryhmävoitot autom. {aw}</span></span>
+              <label className="row tiny" style={{gap:6}}>+ pudotuspelivoitot<input className="sc" inputMode="numeric" value={ts.wins||""} placeholder="0" onChange={e=>/^[0-9]{0,2}$/.test(e.target.value)&&setTeam(t,"wins",e.target.value)}/></label>
+              <label className="row tiny" style={{gap:6}}><input type="checkbox" checked={!!ts.champ} onChange={e=>setTeam(t,"champ",e.target.checked)}/>Mestari</label>
+            </div>; })}
+        </>}
+        <div style={{textAlign:"center",marginTop:12}}><button className="act" onClick={saveTs}>Tallenna joukkuetiedot</button></div>
+      </div>
+
+      {/* TIPPUMISET (kaikki 48) */}
+      <div className="card">
+        <div className="section-h" onClick={()=>setOpen(o=>({...o,elim:!o.elim}))}><span>Tippuneet maat</span><span>{open.elim?"–":"+"}</span></div>
+        {open.elim&&<div>
+          <p className="tiny">Merkitse maa tippuneeksi pudotuspelien edetessä → sen pelaajat ja mestari­valinnat näkyvät tulostaulukossa harmaana. Kerätyt pisteet säilyvät.</p>
+          {Object.keys(GROUPS).map(g=>(
+            <div key={g} style={{marginTop:8}}>
+              <div className="tiny" style={{color:"var(--blue2)",fontWeight:800}}>Lohko {g}</div>
+              <div className="row wrapf" style={{gap:8,marginTop:4}}>
+                {GROUPS[g].map(t=>{ const out=tsDraft[t]&&tsDraft[t].out;
+                  return <label key={t} className="row tiny" style={{gap:4,border:"1px solid var(--line)",borderRadius:8,padding:"5px 8px",opacity:out?.6:1}}>
+                    <input type="checkbox" checked={!!out} onChange={e=>setTeam(t,"out",e.target.checked)}/><span className="flag">{flag(t)}</span>{t}</label>; })}
+              </div>
+            </div>
+          ))}
+          <div style={{textAlign:"center",marginTop:12}}><button className="act" onClick={saveTs}>Tallenna tippumiset</button></div>
+        </div>}
+      </div>
+
+      {/* KORJAA OSALLISTUJAN VALINTOJA */}
+      <div className="card">
+        <div className="section-h" onClick={()=>setOpen(o=>({...o,edit:!o.edit}))}><span>Korjaa osallistujan valintoja</span><span>{open.edit?"–":"+"}</span></div>
+        {open.edit&&<div>
+          <div className="row wrapf" style={{gap:8}}>
+            <select value={editId} onChange={e=>e.target.value?startEdit(e.target.value):setEditDraft(null)}>
+              <option value="">— valitse osallistuja —</option>
+              {Object.keys(preds).map(id=><option key={id} value={id}>{preds[id].name||id}</option>)}
+            </select>
+          </div>
+          {editDraft&&<div style={{marginTop:12}}>
+            <TeamPicker value={editDraft} onChange={setEditDraft} disabled={false} playerstats={playerstats} showPts={false}/>
+            <div style={{textAlign:"center",marginTop:12}}><button className="act" onClick={saveEdit}>Tallenna korjaus</button></div>
+            <p className="tiny">Huom: tämä korjaa pelaaja- ja mestarivalinnat. Otteluveikkaukset osallistuja korjaa itse (ennen lukitusta).</p>
+          </div>}
+        </div>}
+      </div>
+
+      {/* MAKSUT */}
+      <div className="card">
+        <div className="section-h" onClick={()=>setOpen(o=>({...o,maksut:!o.maksut}))}><span>Maksut</span><span>{open.maksut?"–":"+"}</span></div>
+        {open.maksut&&<div>
+          {Object.keys(preds).length===0?<div className="note">Ei veikkaajia vielä.</div>:<>
+            <p className="tiny">Rastita kun osallistujan maksu on tullut. Merkki näkyy kaikille tulostaulukossa ja osallistujan omalla sivulla — kunnes veikkaukset lukitaan.</p>
+            <div className="tiny" style={{margin:"6px 0 4px",color:"var(--grn)",fontWeight:800}}>Maksanut {Object.values(preds).filter(p=>p.maksettu).length}/{Object.keys(preds).length}</div>
+            {Object.keys(preds).sort((a,b)=>(preds[a].name||a).localeCompare(preds[b].name||b,"fi")).map(id=>{ const paid=!!preds[id].maksettu;
+              return <label key={id} className="row between" style={{padding:"8px 0",borderBottom:"1px dashed var(--line)",cursor:"pointer"}}>
+                <span style={{fontWeight:700}}>{preds[id].name||id}</span>
+                <span className="row" style={{gap:10}}><PayPill paid={paid}/><input type="checkbox" style={{width:18,height:18}} checked={paid} onChange={e=>setPaid(id,e.target.checked)}/></span>
+              </label>; })}
+          </>}
+        </div>}
+      </div>
+
+      {/* NOLLAA PELAAJAN PIN */}
+      <div className="card">
+        <div className="section-h" onClick={()=>setOpen(o=>({...o,pin:!o.pin}))}><span>Nollaa pelaajan PIN</span><span>{open.pin?"–":"+"}</span></div>
+        {open.pin&&<div>
+          <div className="row wrapf" style={{gap:8}}>
+            <select value={resetId} onChange={e=>setResetId(e.target.value)}>
+              <option value="">— valitse osallistuja —</option>
+              {Object.keys(preds).map(id=><option key={id} value={id}>{(preds[id].name||id)+(preds[id].pin?" 🔒":"")}</option>)}
+            </select>
+            <button className="ghost" disabled={!resetId} onClick={doResetPin}>Nollaa PIN</button>
+          </div>
+          <p className="tiny">🔒 = veikkaajalla on PIN asetettuna. Jos pelaaja unohtaa PIN-koodinsa, nollaa se tästä — sen jälkeen veikkauksen voi avata ilman PIN:iä (ja asettaa uuden).</p>
+        </div>}
+      </div>
+
+      <div className="card">
+        <div className="section-h" onClick={()=>setOpen(o=>({...o,del:!o.del}))}><span>Poista veikkaaja</span><span>{open.del?"–":"+"}</span></div>
+        {open.del&&<div>
+          <div className="row wrapf" style={{gap:8}}>
+            <select value={delId} onChange={e=>setDelId(e.target.value)}>
+              <option value="">— valitse osallistuja —</option>
+              {Object.keys(preds).map(id=><option key={id} value={id}>{preds[id].name||id}</option>)}
+            </select>
+            <button className="ghost" style={{borderColor:"var(--red)",color:"var(--red)"}} disabled={!delId} onClick={doDelete}>Poista valittu</button>
+          </div>
+          <p className="tiny">Poistaa veikkaajan rivin pysyvästi (esim. testirivi tai kahteen kertaan tullut). Tätä ei voi perua.</p>
+        </div>}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

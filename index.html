@@ -95,6 +95,7 @@ button.ghost:hover{border-color:var(--grn)}
 .pill.g2{background:rgba(56,200,232,.18);color:#4fd0ec}
 .pill.y{background:rgba(255,207,63,.16);color:var(--amb)}
 .pill.z{background:rgba(255,93,82,.13);color:var(--red)}
+.pill.gold{background:linear-gradient(120deg,#a9851a,#ffcf3f);color:#1a1400}
 .pill.dbl{background:rgba(255,207,63,.18);color:var(--amb);border:1px solid var(--amb2)}
 .kpi{font-family:'Anton';font-size:30px;line-height:1}
 .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
@@ -107,6 +108,11 @@ button.ghost:hover{border-color:var(--grn)}
 .cellbox.out{background:#161a26}
 .cellbox .nm{font-weight:700;font-size:15px}
 .cellbox.out .nm{color:var(--mut)}
+.x2{display:inline-block;margin-left:6px;font-size:10px;font-weight:800;color:#1a1400;background:var(--amb);border-radius:5px;padding:0 5px;vertical-align:middle;letter-spacing:.3px}
+.cellbox.out .x2{background:var(--grey);color:#cfd8d3}
+.chpill{display:inline-block;font-size:9px;font-weight:800;color:#fff;padding:1px 6px;border-radius:999px;letter-spacing:.3px;vertical-align:middle}
+.chpill.mtv{background:#e23b3b}
+.chpill.yle{background:#13a8a8}
 .cellbox .pts{font-family:'Spline Sans Mono';font-size:12px;color:var(--teal);font-weight:600}
 .cellbox.out .pts{color:var(--grey)}
 .flag{margin-right:0;display:inline-flex;align-items:center;vertical-align:middle}
@@ -161,6 +167,44 @@ button.ghost:hover{border-color:var(--grn)}
 .toast.err{background:var(--red);color:#2a0a08}
 @keyframes toastin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes toastout{to{opacity:0;transform:translateY(14px)}}
+/* ---- pudotuspelit (KO) ---- */
+.kmatch{display:grid;grid-template-columns:1fr 32px 1fr;gap:8px;align-items:stretch;padding:6px 0;border-bottom:1px dashed var(--line)}
+.kmatch:last-child{border-bottom:none}
+.kvs{align-self:center;text-align:center;color:var(--mut);font-size:11px;font-weight:800}
+.teambtn{font-family:inherit;text-align:left;display:flex;align-items:center;gap:6px;width:100%;background:#0b1426;border:1px solid var(--line);border-radius:10px;padding:9px 10px;color:var(--ink);font-weight:700;font-size:14px;cursor:pointer;transition:.12s}
+.teambtn:hover:not(:disabled){border-color:var(--blue2)}
+.teambtn.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.teambtn.champ.on{background:linear-gradient(120deg,#a9851a,#ffcf3f);border-color:var(--amb);color:#1a1400}
+.teambtn:disabled{opacity:.45;cursor:default}
+.teambtn .ph{color:var(--mut);font-weight:600}
+.roundpts{font-size:11px;font-weight:800;color:var(--amb);background:rgba(255,207,63,.14);border:1px solid var(--amb2);border-radius:999px;padding:2px 9px}
+.champnote{background:rgba(255,207,63,.10);border:1px solid var(--amb2);border-radius:12px;padding:10px 12px;margin:12px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.starbadge{font-size:11px;font-weight:800;color:var(--amb);background:rgba(255,207,63,.18);border:1px solid var(--amb2);border-radius:999px;padding:2px 9px}
+.wcheck{color:var(--grn);font-weight:800;margin-right:4px}
+.matchno{font-size:10px;color:var(--mut);font-weight:800}
+.kmatch select{width:100%}
+.koround{margin-bottom:14px}
+/* ---- pudotuspelipuu (Kaavio-välilehti) ---- */
+.kt-scroll{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#0c1830;padding:16px}
+.kt-bracket{display:flex;align-items:flex-start;min-width:max-content}
+.kt-col{margin-right:32px;display:flex;flex-direction:column}
+.kt-col:last-child{margin-right:0}
+.kt-head{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--blue2);margin-bottom:8px;text-align:center}
+.kt-round{display:flex;flex-direction:column;justify-content:space-around;width:158px}
+.kt-match{position:relative;display:flex;align-items:center;justify-content:center}
+.kt-box{width:158px;background:#11213a;border:1px solid #213257;border-radius:9px;overflow:hidden}
+.kt-trow{display:flex;align-items:center;gap:8px;padding:6px 9px;font-size:13px;font-weight:600;border-bottom:1px solid #1a2842}
+.kt-trow:last-child{border-bottom:none}
+.kt-trow .kt-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kt-trow.kt-win{background:rgba(57,229,124,.12)}
+.kt-trow.kt-win .kt-nm{color:var(--teal);font-weight:800}
+.kt-trow.kt-dim{opacity:.45}
+.kt-trow.kt-ph .kt-nm{color:#5e739a}
+.kt-fl{width:24px;height:18px;border-radius:2px;flex:0 0 auto;background:#1a2842;display:inline-block}
+.kt-stub-r{position:absolute;right:-16px;top:50%;width:16px;height:2px;background:#2a3c61}
+.kt-stub-l{position:absolute;left:-16px;top:50%;width:16px;height:2px;background:#2a3c61}
+.kt-vline{position:absolute;right:-16px;top:50%;width:2px;height:var(--slot);background:#2a3c61}
+.kt-bronze{margin-top:16px}
 </style>
 </head>
 <body>
@@ -401,7 +445,664 @@ function Countdown(){
 }
 
 /* ===================== APP ===================== */
+/* ===================== PUDOTUSPELIT (KO) ===================== */
+const koDoc=(n)=>db.collection("ko").doc(n);
+const KO_ROUNDS=[
+  {key:"R32",title:"Round 32",n:16,pts:1},
+  {key:"R16",title:"Round 16",n:8,pts:3},
+  {key:"QF", title:"Puolivälierät",n:4,pts:6},
+  {key:"SF", title:"Välierät",n:2,pts:8},
+  {key:"BR", title:"Pronssiottelu",n:1,pts:5},
+  {key:"FIN",title:"Finaali — mestari",n:1,pts:10},
+];
+const KO_PTS={R32:1,R16:3,QF:6,SF:8,BR:5,FIN:10};
+// R32-paikka i = virallinen ottelu 73+i (numerojärjestys, kuten otteluohjelmassa)
+const KO_R32_LABELS=[73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88];
+const KO_R32_DESC=["2A v 2B","1E v 3 (ABCDF)","1F v 2C","1C v 2F","1I v 3 (CDFGH)","2E v 2I","1A v 3 (CEFHI)","1L v 3 (EHIJK)","1D v 3 (BEFIJ)","1G v 3 (AEHIJ)","2K v 2L","1H v 2J","1B v 3 (EFGIJ)","1J v 2H","1K v 3 (DEIJL)","2D v 2G"];
+// Viralliset etenemiskytkennät FIFAn otteluohjelmasta (lapsipaikat seuraavalle kierrokselle)
+const KO_FEED={ R16:[[1,4],[0,2],[3,5],[6,7],[10,11],[8,9],[13,15],[12,14]], QF:[[0,1],[4,5],[2,3],[6,7]], SF:[[0,1],[2,3]] };
+// Latvajärjestys kaaviopuun piirtämiseen (paikat tree-järjestyksessä, jotta haarat osuvat oikein)
+const KO_TREE={ R32:[1,4,0,2,10,11,8,9,3,5,6,7,13,15,12,14], R16:[0,1,4,5,2,3,6,7], QF:[0,1,2,3], SF:[0,1], FIN:[0] };
+// Otteluaikataulu (FIFAn virallinen ohjelma, ET-ajat) — varmistettu
+const KO_SCHEDULE={
+ 73:{d:"2026-06-28",t:"15:00",p:"Los Angeles",c:"Yle"},74:{d:"2026-06-29",t:"16:30",p:"Boston",c:"MTV"},75:{d:"2026-06-29",t:"21:00",p:"Monterrey",c:"Yle"},76:{d:"2026-06-29",t:"13:00",p:"Houston",c:"MTV"},
+ 77:{d:"2026-06-30",t:"17:00",p:"New York/New Jersey",c:"Yle"},78:{d:"2026-06-30",t:"13:00",p:"Dallas",c:"Yle"},79:{d:"2026-06-30",t:"21:00",p:"Mexico City",c:"Yle"},80:{d:"2026-07-01",t:"12:00",p:"Atlanta",c:"MTV"},
+ 81:{d:"2026-07-01",t:"20:00",p:"San Francisco Bay Area",c:"MTV"},82:{d:"2026-07-01",t:"16:00",p:"Seattle",c:"MTV"},83:{d:"2026-07-02",t:"19:00",p:"Toronto",c:"Yle"},84:{d:"2026-07-02",t:"15:00",p:"Los Angeles",c:"Yle"},
+ 85:{d:"2026-07-02",t:"23:00",p:"Vancouver",c:"Yle"},86:{d:"2026-07-03",t:"18:00",p:"Miami",c:"MTV"},87:{d:"2026-07-03",t:"21:30",p:"Kansas City",c:"MTV"},88:{d:"2026-07-03",t:"14:00",p:"Dallas",c:"MTV"},
+ 89:{d:"2026-07-04",t:"17:00",p:"Philadelphia",c:"MTV"},90:{d:"2026-07-04",t:"13:00",p:"Houston",c:"MTV"},91:{d:"2026-07-05",t:"16:00",p:"New York/New Jersey",c:"Yle"},92:{d:"2026-07-05",t:"20:00",p:"Mexico City",c:"Yle"},
+ 93:{d:"2026-07-06",t:"15:00",p:"Dallas",c:"MTV"},94:{d:"2026-07-06",t:"20:00",p:"Seattle",c:"MTV"},95:{d:"2026-07-07",t:"12:00",p:"Atlanta",c:"Yle"},96:{d:"2026-07-07",t:"16:00",p:"Vancouver",c:"Yle"},
+ 97:{d:"2026-07-09",t:"16:00",p:"Boston",c:"Yle"},98:{d:"2026-07-10",t:"15:00",p:"Los Angeles",c:"MTV"},99:{d:"2026-07-11",t:"17:00",p:"Miami",c:"Yle"},100:{d:"2026-07-11",t:"21:00",p:"Kansas City",c:"MTV"},
+ 101:{d:"2026-07-14",t:"15:00",p:"Dallas",c:"Yle"},102:{d:"2026-07-15",t:"15:00",p:"Atlanta",c:"MTV"},103:{d:"2026-07-18",t:"17:00",p:"Miami",c:"MTV"},104:{d:"2026-07-19",t:"15:00",p:"New York/New Jersey",c:"Yle"}
+};
+function koMatchNo(round,i){ if(round==="R32")return 73+i; if(round==="R16")return 89+i; if(round==="QF")return 97+i; if(round==="SF")return 101+i; if(round==="BR")return 103; if(round==="FIN")return 104; return 0; }
+function koFiTime(t){ if(!t||t.indexOf(":")<0) return ""; const p=t.split(":"); const fh=((parseInt(p[0],10)||0)+7)%24; return (fh<10?"0":"")+fh+":"+p[1]; }
+function koTeamOut(B,team){ if(!team) return false; const teams=(B&&B.teams)||[]; const W=(B&&B.winners)||{};
+  for(const meta of KO_ROUNDS){ if(!W[meta.key]) continue;
+    for(let i=0;i<meta.n;i++){ const win=koGet(W,meta.key,i); if(!win) continue; const [a,b]=koTeamsFromW(teams,W,meta.key,i);
+      if((a===team||b===team)&&win!==team) return true; } }
+  return false;
+}
+const KO_TESTIPARIT=[
+  {a:"Brasilia",b:"Sveitsi"},{a:"Espanja",b:"Senegal"},{a:"Argentiina",b:"Norja"},{a:"Portugali",b:"Japani"},
+  {a:"Ranska",b:"Kroatia"},{a:"Saksa",b:"Uruguay"},{a:"Englanti",b:"Marokko"},{a:"Alankomaat",b:"Ecuador"},
+  {a:"Belgia",b:"Kolumbia"},{a:"Yhdysvallat",b:"Itävalta"},{a:"Meksiko",b:"Egypti"},{a:"Kanada",b:"Ruotsi"},
+  {a:"Kap Verde",b:"Norsunluurannikko"},{a:"Etelä-Korea",b:"Panama"},{a:"Australia",b:"Uzbekistan"},{a:"Paraguay",b:"Algeria"},
+];
+const KO_ORDER=["R32","R16","QF","SF","BR","FIN"];
+
+const koGet=(w,r,i)=> (w&&w[r]&&w[r][i]!=null)?w[r][i]:null;
+const koLoser=(pair,win)=>{ if(!win) return null; if(pair[0]===win) return pair[1]; if(pair[1]===win) return pair[0]; return null; };
+function koTeamsFromW(teams,w,round,i){
+  if(round==="R32"){ const p=teams&&teams[i]; return p?[p.a||null,p.b||null]:[null,null]; }
+  if(round==="R16"){ const f=KO_FEED.R16[i]; return [koGet(w,"R32",f[0]),koGet(w,"R32",f[1])]; }
+  if(round==="QF"){ const f=KO_FEED.QF[i]; return [koGet(w,"R16",f[0]),koGet(w,"R16",f[1])]; }
+  if(round==="SF"){ const f=KO_FEED.SF[i]; return [koGet(w,"QF",f[0]),koGet(w,"QF",f[1])]; }
+  if(round==="FIN") return [koGet(w,"SF",0),koGet(w,"SF",1)];
+  if(round==="BR"){ const s0=KO_FEED.SF[0], s1=KO_FEED.SF[1];
+    return [ koLoser([koGet(w,"QF",s0[0]),koGet(w,"QF",s0[1])], koGet(w,"SF",0)),
+             koLoser([koGet(w,"QF",s1[0]),koGet(w,"QF",s1[1])], koGet(w,"SF",1)) ]; }
+  return [null,null];
+}
+function koClearDownstream(w,fromRound){
+  const idx=["R32","R16","QF","SF"].indexOf(fromRound);
+  const next={...w};
+  if(idx>=0){ ["R16","QF","SF"].slice(idx).forEach(()=>{}); const order=["R32","R16","QF","SF"];
+    for(let k=idx+1;k<order.length;k++) next[order[k]]={}; next.FIN={}; next.BR={}; }
+  return next;
+}
+function koReadyTeams(teams){ return Array.isArray(teams)&&teams.length===16&&teams.every(p=>p&&p.a&&p.b); }
+function koWinSet(w,r){ const o=w&&w[r]; if(!o) return []; return Object.keys(o).map(k=>o[k]).filter(Boolean); }
+function koScoreBracket(uw,aw){
+  let base=0, champ=0; const ch=koGet(uw,"FIN",0);
+  KO_ORDER.forEach(r=>{ const as=new Set(koWinSet(aw,r));
+    koWinSet(uw,r).forEach(t=>{ if(as.has(t)){ base+=KO_PTS[r]; if(ch&&t===ch) champ+=KO_PTS[r]; } }); });
+  return {base,champ};
+}
+function koPlayerPts(pl,koPlayerstats){ if(!pl||!pl.name||!pl.pos) return 0; return playerPts(pl.pos,koPlayerstats[pkey(pl.name,pl.country)]); }
+function koRows(koPreds,aw,koPlayerstats){
+  return Object.keys(koPreds).map(id=>{ const p=koPreds[id]; const {base,champ}=koScoreBracket(p.bracket||{},aw);
+    const pelaaja=koPlayerPts(p.player,koPlayerstats);
+    return {id,p,kaavio:base-champ,mestari:champ*2,champBase:champ,champ,champTeam:koGet(p.bracket||{},"FIN",0)||"",pelaaja,total:base+champ+pelaaja}; }).sort((a,b)=>b.total-a.total);
+}
+
+/* yksi voittaja-/valintanappi */
+function KoBtn({team,on,disabled,champ,onClick}){
+  return <button className={"teambtn"+(champ?" champ":"")+(on?" on":"")} disabled={disabled} onClick={()=>team&&onClick&&onClick()}>
+    {team?<Fragment>{on?<span className="wcheck">✓</span>:null}<span className="flag">{flag(team)}</span>{team}</Fragment>:<span className="ph">Avoin</span>}
+  </button>;
+}
+
+/* yhden pelaajan valinta (maa → pelaaja) */
+function KOPlayerPick({value,onChange,disabled}){
+  const v=value||{name:"",country:"",pos:""};
+  const [custom,setCustom]=useState(false);
+  const squad=v.country?(SQUADS[v.country]||null):null;
+  const hasSquad=squad&&squad.length>0;
+  const known=hasSquad&&squad.some(p=>p.n===v.name);
+  const selVal=custom?"__custom__":(known?v.name:(v.name?"__own__":""));
+  return (
+    <div className="card" style={{margin:0,padding:12,maxWidth:440}}>
+      <div className="lab" style={{color:"var(--blue2)"}}>Pelaaja (1 kpl, mistä tahansa maasta)</div>
+      <select style={{width:"100%",marginTop:6}} disabled={disabled} value={v.country||""}
+        onChange={e=>{onChange({name:"",country:e.target.value,pos:""});setCustom(false);}}>
+        <option value="">— maa —</option>
+        {ALL_TEAMS.map(t=><option key={t} value={t}>{t}</option>)}
+      </select>
+      {hasSquad
+        ? <select style={{width:"100%",marginTop:6}} disabled={disabled} value={selVal}
+            onChange={e=>{const x=e.target.value;
+              if(x==="__custom__"){setCustom(true);}
+              else if(x==="__own__"){}
+              else {const f=squad.find(p=>p.n===x); onChange({name:x,country:v.country,pos:f?f.pos:v.pos});setCustom(false);}}}>
+            <option value="">— pelaaja —</option>
+            {POS_ORDER.map(pos=>(
+              <optgroup key={pos} label={POS[pos].label}>
+                {squad.filter(p=>p.pos===pos).map(p=><option key={p.n} value={p.n}>{p.n}</option>)}
+              </optgroup>
+            ))}
+            {v.name&&!known&&<option value="__own__">{v.name} (oma)</option>}
+            <option value="__custom__">✏ Muu / kirjoita itse…</option>
+          </select>
+        : null}
+      {(!hasSquad||custom)&&<div className="row wrapf" style={{gap:6,marginTop:6}}>
+        <input style={{flex:"1 1 150px"}} placeholder="Pelaajan nimi" disabled={disabled}
+          value={v.name||""} onChange={e=>onChange({name:e.target.value,country:v.country,pos:v.pos})}/>
+        <select disabled={disabled} value={v.pos||""} onChange={e=>onChange({name:v.name,country:v.country,pos:e.target.value})}>
+          <option value="">— paikka —</option>
+          {POS_ORDER.map(pos=><option key={pos} value={pos}>{POS[pos].label}</option>)}
+        </select>
+      </div>}
+      {v.name&&v.pos&&<div className="tiny" style={{marginTop:6}}>{POS[v.pos].label}: maali {POS[v.pos].goal}p · syöttö {POS[v.pos].assist}p · 0-peli {POS[v.pos].cs}p · punainen {POS[v.pos].red}p · oma maali {POS[v.pos].og}p</div>}
+    </div>
+  );
+}
+
+/* ========== OMA PUDOTUSPELIVEIKKAUS (Oma veikkaus -välilehdellä) ========== */
+function KOVeikkaus({koBracket,koConfig,koPreds,koPlayerstats}){
+  const B=koBracket||{}; const teams=B.teams||[];
+  const ready=koReadyTeams(teams);
+  const locked=!!(koConfig&&koConfig.locked);
+  const existing=Object.keys(koPreds).sort((a,b)=>a.localeCompare(b,"fi"));
+  const [name,setName]=useState("");
+  const [draft,setDraft]=useState(null);
+  const [pinFor,setPinFor]=useState(null);
+  const [pinInput,setPinInput]=useState("");
+  const [pinErr,setPinErr]=useState("");
+  const [msg,setMsg]=useState("");
+
+  const start=(n)=>{ const base=koPreds[nameId(n)]||{name:n,bracket:{},champ:"",player:{name:"",country:"",pos:""},pin:"",maksettu:false};
+    setName(n); setDraft(JSON.parse(JSON.stringify(base))); setMsg(""); };
+  const requestOpen=(n)=>{ const nm=(n||"").trim(); if(!nm) return; const pred=koPreds[nameId(nm)];
+    if(pred&&pred.pin&&!locked){ setPinFor(nm); setPinInput(""); setPinErr(""); } else start(nm); };
+  const tryPin=()=>{ const pred=koPreds[nameId(pinFor)];
+    if(pred&&String(pred.pin)===String(pinInput).trim()){ const n=pinFor; setPinFor(null); setPinInput(""); start(n); }
+    else setPinErr("Väärä PIN. Yritä uudelleen."); };
+
+  const W=draft?(draft.bracket||{}):{};
+  const setWinner=(round,i,team)=>{ setDraft(d=>{ const w={...(d.bracket||{})};
+    w[round]={...(w[round]||{}),[i]:team}; const nw=koClearDownstream(w,round);
+    return {...d,bracket:nw,champ:koGet(nw,"FIN",0)||""}; }); };
+
+  const save=async()=>{
+    if(!name.trim()){ setMsg("Anna nimi."); return; }
+    const pl=draft.player||{};
+    try{ await db.collection("kopredictions").doc(nameId(name)).set({
+        name:name.trim(), pin:(draft.pin||"").trim(), maksettu:!!draft.maksettu,
+        bracket:draft.bracket||{}, champ:draft.champ||"", player:{name:(pl.name||"").trim(),country:pl.country||"",pos:pl.pos||""}
+      }); setMsg(""); toast("Pudotuspeliveikkaus tallennettu ✔");
+    }catch(e){ setMsg("Virhe: "+e.message); toast("Tallennus epäonnistui","err"); }
+  };
+
+  if(!ready) return (
+    <div className="card" style={{borderStyle:"dashed"}}>
+      <div className="lab" style={{color:"var(--blue2)"}}>Pudotuspeliveikkaus</div>
+      <p className="tiny" style={{maxWidth:560}}>Pudotuspelikaavio avautuu, kun lohkot on pelattu ja järjestäjä on syöttänyt pudotuspelijoukkueet. Tämä on erillinen minipeli — ei vaikuta pääveikkaukseesi.</p>
+    </div>
+  );
+
+  if(!draft&&pinFor) return (
+    <div className="card">
+      <div className="lab warn">🔒 PIN tarvitaan</div>
+      <h2 style={{fontSize:22,margin:"6px 0 6px"}}>Avaa pudotuspeliveikkaus: {pinFor}</h2>
+      <p className="tiny" style={{marginBottom:10}}>Tämä veikkaus on suojattu omalla pudotuspeli-PIN-koodilla.</p>
+      <div className="row wrapf">
+        <input type="password" inputMode="numeric" autoFocus placeholder="PIN" value={pinInput}
+          onChange={e=>setPinInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")tryPin();}} style={{maxWidth:160}}/>
+        <button className="act" onClick={tryPin}>Avaa</button>
+        <button className="ghost" onClick={()=>{setPinFor(null);setPinInput("");setPinErr("");}}>Peruuta</button>
+      </div>
+      {pinErr&&<div className="note warn">{pinErr} Järjestäjä voi nollata PIN:n.</div>}
+    </div>
+  );
+
+  if(!draft) return (
+    <div className="card">
+      <div className="lab" style={{color:"var(--blue2)"}}>Pudotuspeliveikkaus</div>
+      <div className="note">Erillinen minipeli pudotuspeleihin: täytä kaavio (kuka etenee), valitse oma mestari ja yksi pelaaja. Oma 5 €:n potti, vapaaehtoinen. Ei vaikuta pääveikkaukseen.</div>
+      <div className="lab">Uusi / oma nimi</div>
+      <div className="row wrapf" style={{marginTop:6}}>
+        <input placeholder="Nimesi" value={name} onChange={e=>setName(e.target.value)}
+          onKeyDown={e=>{if(e.key==="Enter")requestOpen(name);}} style={{minWidth:200}}/>
+        <button className="act" onClick={()=>requestOpen(name)}>Aloita</button>
+      </div>
+      <p className="tiny" style={{marginTop:6}}>Voit käyttää samaa nimeä kuin pääpelissä. Pudotuspelillä on kuitenkin oma, erillinen PIN.</p>
+      {existing.length>0&&<Fragment><div className="divider"/><div className="lab">Palaatko muokkaamaan? Valitse nimesi</div>
+        <div className="row wrapf" style={{marginTop:6}}>
+          <select defaultValue="" onChange={e=>{const v=e.target.value;e.target.value="";if(v)requestOpen(koPreds[v].name||v);}} style={{minWidth:220}}>
+            <option value="">— valitse nimesi —</option>
+            {existing.map(id=><option key={id} value={id}>{(koPreds[id].name||id)+(koPreds[id].pin?" 🔒":"")}</option>)}
+          </select>
+        </div></Fragment>}
+      {locked&&<div className="note warn">🔒 Pudotuspeliveikkaukset on lukittu — voit katsella mutta et muokata.</div>}
+    </div>
+  );
+
+  const renderRound=(meta)=>(
+    <div className="koround" key={meta.key}>
+      <div className="row between"><div className="lab" style={{color:meta.key==="FIN"?"var(--amb)":"var(--blue2)"}}>{meta.title}</div><span className="roundpts">{meta.pts} p{meta.key==="FIN"?" · oma mestari ×2":""}</span></div>
+      {Array.from({length:meta.n}).map((_,i)=>{ const [a,b]=koTeamsFromW(teams,W,meta.key,i); const sel=koGet(W,meta.key,i);
+        const champ=meta.key==="FIN";
+        return <div className="kmatch" key={i}>
+          <KoBtn team={a} champ={champ} on={!!a&&sel===a} disabled={locked||!a} onClick={()=>setWinner(meta.key,i,a)}/>
+          <div className="kvs">{meta.n>1?<div className="matchno">O{i+1}</div>:null}VS</div>
+          <KoBtn team={b} champ={champ} on={!!b&&sel===b} disabled={locked||!b} onClick={()=>setWinner(meta.key,i,b)}/>
+        </div>;
+      })}
+    </div>
+  );
+
+  const champ=koGet(W,"FIN",0);
+  return (
+    <div>
+      <div className="card">
+        <div className="row between wrapf">
+          <div><div className="lab">Pudotuspeliveikkaaja</div><div style={{fontSize:22,fontWeight:800}}>{name}</div></div>
+          <div className="row"><button className="ghost" onClick={()=>{setDraft(null);setMsg("");}}>Vaihda nimeä</button>
+            <button className="act" onClick={save} disabled={locked}>Tallenna</button></div>
+        </div>
+        {!locked&&<div style={{marginTop:10}}><PayPill paid={draft.maksettu} stake={koConfig&&koConfig.stake!=null?koConfig.stake:5} full/></div>}
+        {msg&&<div className="note" style={{marginBottom:0}}>{msg}</div>}
+        {locked&&<div className="note warn">🔒 Pudotuspeliveikkaukset on lukittu.</div>}
+      </div>
+
+      {!locked&&<div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>🔒 Oma pudotuspeli-PIN — suositeltu</div>
+        <p className="tiny" style={{margin:"6px 0 10px"}}>💡 Tämä on erillinen pääpelin PIN:stä. Ilman PIN-koodia kuka tahansa voi avata pudotuspeliveikkauksesi tällä nimellä ja nähdä tai muuttaa valintojasi ennen lukitusta. Aseta se nyt, niin se kysytään aina kun veikkaus avataan.</p>
+        <div className="row wrapf" style={{gap:8}}>
+          <input type="password" inputMode="numeric" placeholder="esim. 1234" disabled={locked}
+            value={draft.pin||""} onChange={e=>setDraft(d=>({...d,pin:e.target.value}))} style={{maxWidth:160}}/>
+          {(draft.pin||"").trim()
+            ? <span className="tiny" style={{color:"var(--teal)"}}>PIN asetettu — muista se! Tyhjennä kenttä poistaaksesi suojan.</span>
+            : <span className="tiny">Valinnainen, mutta suositeltu. Kevyt suoja kurkkimista vastaan (ei vahva salasana).</span>}
+        </div>
+      </div>}
+
+      <div className="card">
+        <div className="lab" style={{color:"var(--blue2)"}}>Kaavio — valitse jatkoonmenijä joka ottelusta</div>
+        <p className="tiny" style={{margin:"4px 0 8px"}}>Voittajat etenevät automaattisesti seuraavalle kierrokselle. Finaalin voittaja on oma mestarisi (pisteet ×2 koko polulla).</p>
+        {KO_ROUNDS.map(renderRound)}
+        {champ&&<div className="champnote"><span className="starbadge">★ Oma mestari</span><span className="flag">{flag(champ)}</span><b>{champ}</b><span className="tiny">— pisteet tuplataan polulla.</span></div>}
+      </div>
+
+      <div className="card">
+        <KOPlayerPick value={draft.player} disabled={locked} onChange={pl=>setDraft(d=>({...d,player:pl}))}/>
+      </div>
+
+      {!locked&&<div className="row wrapf" style={{margin:"2px 0 12px",gap:10,alignItems:"center"}}>
+        <button className="act" onClick={save}>Tallenna pudotuspeliveikkaus</button>
+        <span className="tiny">Voit muokata ja tallentaa uudelleen, kunnes pudotuspelit lukitaan.</span>
+      </div>}
+    </div>
+  );
+}
+
+/* ========== PUDOTUSPELIT-TULOSSIVU ========== */
+function KOLive({koBracket,koPreds,koPlayerstats,today}){
+  const B=koBracket||{}; const teams=B.teams||[]; const W=B.winners||{};
+  const [exp,setExp]=useState({});
+  if(!koReadyTeams(teams)) return null;
+  const names=Object.keys(koPreds);
+  const slots=[];
+  KO_ORDER.forEach(r=>{ const n=KO_ROUNDS.find(x=>x.key===r).n;
+    for(let i=0;i<n;i++){ const [a,b]=koTeamsFromW(teams,W,r,i); if(!a||!b) continue;
+      const mn=koMatchNo(r,i); const sc=KO_SCHEDULE[mn]||{d:"",t:"",p:""};
+      slots.push({r,i,a,b,win:koGet(W,r,i),mn,d:sc.d,t:sc.t,p:sc.p,c:sc.c,dt:(sc.d||"9999-12-31")+"T"+(sc.t||"00:00")}); } });
+  const decided=slots.filter(s=>s.win).sort((a,b)=>a.dt<b.dt?1:a.dt>b.dt?-1:0).slice(0,6);
+  const upcoming=slots.filter(s=>!s.win).sort((a,b)=>a.dt<b.dt?-1:a.dt>b.dt?1:0).slice(0,6);
+  const rmeta=(r)=>KO_ROUNDS.find(x=>x.key===r);
+  const koDepth=(uw,t)=>{ let d=-1; KO_ORDER.forEach((rr,idx)=>{ if(koWinSet(uw,rr).includes(t)) d=idx; }); return d; };
+  const userPick=(id,s)=>{ const uw=koPreds[id].bracket||{}; const set=koWinSet(uw,s.r); const aIn=set.includes(s.a), bIn=set.includes(s.b);
+    if(aIn&&!bIn) return s.a; if(bIn&&!aIn) return s.b;
+    if(aIn&&bIn){ const ch=koGet(uw,"FIN",0); if(ch===s.a) return s.a; if(ch===s.b) return s.b; return koDepth(uw,s.a)>=koDepth(uw,s.b)?s.a:s.b; }
+    return null; };
+  if(decided.length===0&&upcoming.length===0) return null;
+  return (<div className="livewrap">
+    {decided.length>0&&<div className="card">
+      <div className="lab" style={{color:"var(--blue2)"}}>Edelliset ottelut</div>
+      {decided.map(s=>{ const picks=names.map(id=>{ const pk=userPick(id,s); const ch=koGet(koPreds[id].bracket||{},"FIN",0); return {n:koPreds[id].name||id,pk,isCh:!!(pk&&ch&&pk===ch)}; }).filter(x=>x.pk);
+        const open=exp["D"+s.r+s.i]; const show=open?picks:picks.slice(0,3); const rest=picks.length-show.length;
+        return <div key={s.r+s.i} className="liverow">
+          <div className="row between"><div className="tm">{flag(s.a)} {s.a} <span className="mut">–</span> {flag(s.b)} {s.b}</div>
+            <div className="row" style={{gap:6}}><span className="tiny">{rmeta(s.r).title}</span><span className="pill g">{s.win}</span></div></div>
+          <div className="tiny" style={{marginTop:3}}>{dateLabel(s.d,today)} · {s.p} · Ottelu {s.mn}</div>
+          <div className="row wrapf" style={{gap:6,marginTop:5}}>
+            {picks.length===0?<span className="tiny">ei veikkauksia</span>:show.map((x,k)=>{ const ok=x.pk===s.win; const base=KO_PTS[s.r]||0; const pts=ok?(x.isCh?base*2:base):0; return <span key={k} className={"pill "+(ok?(x.isCh?"gold":"g"):"z")}><b>{pts}p</b> {x.n}</span>; })}
+            {picks.length>3&&<span className="morechip" onClick={()=>setExp(e=>({...e,["D"+s.r+s.i]:!open}))}>{open?"▴ vähemmän":"+"+rest+" ▾"}</span>}
+          </div></div>;
+      })}
+    </div>}
+    {upcoming.length>0&&<div className="card">
+      <div className="lab" style={{color:"var(--blue2)"}}>Seuraavat ottelut</div>
+      {upcoming.map(s=>{ const picks=names.map(id=>({n:koPreds[id].name||id,pk:userPick(id,s)})).filter(x=>x.pk);
+        const open=exp["U"+s.r+s.i]; const show=open?picks:picks.slice(0,3); const rest=picks.length-show.length;
+        return <div key={s.r+s.i} className="liverow">
+          <div className="row between"><div className="tm">{flag(s.a)} {s.a} <span className="mut">–</span> {flag(s.b)} {s.b}</div>
+            <span className="tiny" style={{color:"var(--teal)",fontWeight:700}}>{rmeta(s.r).title}</span></div>
+          <div className="tiny" style={{marginTop:3}}>{dateLabel(s.d,today)} klo {s.t} <span style={{color:"var(--teal)"}}>({koFiTime(s.t)})</span>{s.c?<span> <span className={"chpill "+(s.c==="MTV"?"mtv":"yle")}>{s.c}</span></span>:null} · {s.p} · Ottelu {s.mn}</div>
+          <div className="row wrapf" style={{gap:6,marginTop:6}}>
+            {picks.length===0?<span className="tiny">ei veikkauksia</span>:show.map((x,k)=><span key={k} className="predchip" style={{fontSize:11}}>{x.n} <span style={{color:"var(--teal)"}}>{x.pk}</span></span>)}
+            {picks.length>3&&<span className="morechip" onClick={()=>setExp(e=>({...e,["U"+s.r+s.i]:!open}))}>{open?"▴ vähemmän":"+"+rest+" ▾"}</span>}
+          </div></div>;
+      })}
+    </div>}
+  </div>);
+}
+function KOPorssi({koPreds,koPlayerstats}){
+  const [open,setOpen]=useState(false);
+  const names=Object.keys(koPreds);
+  const map={};
+  names.forEach(id=>{ const pk=koPreds[id].player; if(pk&&pk.name&&pk.pos){ const kk=pkey(pk.name,pk.country)+"__"+pk.pos;
+    if(!map[kk]) map[kk]={name:pk.name,country:pk.country,pos:pk.pos,tally:koPlayerstats[pkey(pk.name,pk.country)]||{},pickers:[]};
+    map[kk].pickers.push(koPreds[id].name||id); } });
+  let arr=Object.values(map).map(v=>({...v,pts:playerPts(v.pos,v.tally)})).filter(v=>v.pts!==0);
+  if(arr.length===0) return null;
+  arr.sort((a,b)=>b.pts-a.pts || (a.country||"").localeCompare(b.country||"","fi") || (a.name||"").localeCompare(b.name||"","fi"));
+  const show=open?arr:arr.slice(0,5); const rest=arr.length-show.length;
+  const parts=(v)=>{ const k=POS[v.pos],t=v.tally,out=[];
+    const g=Number(t.goal||0); if(g&&k.goal) out.push([g+" "+(g===1?"maali":"maalia"),g*k.goal]);
+    const a=Number(t.assist||0); if(a&&k.assist) out.push([a+" "+(a===1?"syöttö":"syöttöä"),a*k.assist]);
+    const c=Number(t.cs||0); if(c&&k.cs) out.push([c+" "+(c===1?"nollapeli":"nollapeliä"),c*k.cs]);
+    const r=Number(t.red||0); if(r) out.push([r+" "+(r===1?"punainen kortti":"punaista korttia"),r*k.red]);
+    const o=Number(t.og||0); if(o) out.push([o+" "+(o===1?"oma maali":"omaa maalia"),o*k.og]);
+    return out; };
+  return (<div className="card">
+    <div className="lab" style={{color:"var(--blue2)"}}>Pistepörssi — pudotuspelipelaajat</div>
+    {show.map((v,i)=>{ const ch=parts(v); return (
+      <div key={i} className="liverow">
+        <div className="row between" style={{alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:9,minWidth:0}}>
+            <span className={"rank"+(i===0?" gold":"")} style={{minWidth:22,textAlign:"center"}}>{i+1}</span>
+            <div style={{minWidth:0}}><span style={{fontWeight:800,fontSize:15}}>{flag(v.country)} {v.name}</span> <span className="tiny" style={{textTransform:"uppercase",letterSpacing:".04em"}}>· {POS[v.pos].label}</span></div>
+          </div>
+          <span className="mono" style={{fontSize:18,fontWeight:700,color:v.pts<0?"var(--red)":"var(--teal)"}}>{signp(v.pts)} p</span>
+        </div>
+        <div className="row wrapf" style={{gap:6,marginTop:5}}>
+          {ch.map((c,j)=><span key={j} style={{fontSize:12,fontWeight:700,borderRadius:8,padding:"3px 9px",background:c[1]<0?"rgba(255,93,82,.13)":"rgba(57,229,124,.12)",color:c[1]<0?"var(--red)":"var(--teal)"}}>{c[0]} · {signp(c[1])}</span>)}
+        </div>
+        <div className="tiny" style={{marginTop:6}}>Valinnut: {v.pickers.join(", ")}</div>
+      </div>
+    );})}
+    {arr.length>5&&<div style={{textAlign:"center",marginTop:10}}><span className="morechip" onClick={()=>setOpen(o=>!o)}>{open?"▴ vähemmän":"+"+rest+" ▾"}</span></div>}
+  </div>);
+}
+
+function KO({koBracket,koConfig,koPreds,koPlayerstats}){
+  const B=koBracket||{}; const aw=B.winners||{};
+  const locked=!!(koConfig&&koConfig.locked);
+  const stake=(koConfig&&koConfig.stake!=null)?koConfig.stake:5;
+  const ids=Object.keys(koPreds);
+  const [open,setOpen]=useState({});
+  const [detail,setDetail]=useState(null);
+  const count=ids.length;
+  const rows=koRows(koPreds,aw,koPlayerstats);
+  const pot=count*stake; const prizes=computePrizes(rows.map(r=>({total:r.total})),pot);
+  const mcls=(rank)=>rank===1?"g":rank===2?"s":rank===3?"b":null;
+
+  if(detail&&koPreds[detail]){ const dr=rows.find(x=>x.id===detail); if(dr) return <KOKortti r={dr} koBracket={koBracket} koPlayerstats={koPlayerstats} onBack={()=>setDetail(null)}/>; }
+
+  return (
+    <div>
+      <div className="potbar">
+        <div><div className="lab">Pudotuspeli-potti · {eur(stake)} / osallistuja</div><div className="pottot">{eur(pot)}</div><div className="tiny">{count} mukana</div></div>
+        <div className="tiers">{[["1",pot*0.6,60,"g"],["2",pot*0.3,30,"s"],["3",pot*0.1,10,"b"]].map(([r,a,p,c])=><div key={r} className="tier"><span className={"medal "+c}>{r}</span><div><div className="teur">{eur(a)}</div><div className="tiny">{p} %</div></div></div>)}</div>
+      </div>
+
+      {count===0&&<div className="card"><div className="note">Ei pudotuspeliveikkauksia vielä. Tee omasi “Oma veikkaus” -välilehdellä!</div></div>}
+
+      {!locked&&count>0&&<div className="card">
+        <div className="note warn">🔒 Muiden pudotuspelikaaviot paljastuvat kun järjestäjä lukitsee pudotuspelit. Mukana nyt:</div>
+        <div className="row wrapf" style={{gap:8,marginTop:8}}>
+          {rows.map(r=><span key={r.id} className="jpill">{r.p.name||r.id}{r.p.maksettu?" ✓":" ⧗"}</span>)}
+        </div>
+      </div>}
+
+      {locked&&<KOLive koBracket={koBracket} koPreds={koPreds} koPlayerstats={koPlayerstats} today={todayISO()}/>}
+      {locked&&count>0&&<KOPorssi koPreds={koPreds} koPlayerstats={koPlayerstats}/>}
+      {locked&&count>0&&<Fragment>
+        <div className="card lb-wide" style={{overflowX:"auto"}}>
+          <table className="lbtable">
+            <thead><tr><th>#</th><th>Veikkaaja</th><th>Yht</th><th>Kaavio</th><th>Pelaaja</th><th>Mestari</th></tr></thead>
+            <tbody>
+              {rows.map((r,i)=>{ const m=mcls(prizes[i].rank); return (
+                <tr key={r.id} className={i===0?"top":""} style={{cursor:"pointer"}} onClick={()=>setDetail(r.id)}>
+                  <td><span className={"rank"+(i===0?" gold":"")}>{prizes[i].rank}</span></td>
+                  <td><span style={{fontWeight:800,fontSize:16,display:"inline-flex",alignItems:"center",gap:6}}>{r.p.name||r.id}{m&&<span className={"medal "+m}>{prizes[i].rank}</span>}<span className="chev">{open[r.id]?"⌄":"›"}</span></span></td>
+                  <td><span className="tot" style={{color:i===0?"var(--grn)":"var(--ink)"}}>{r.total}</span></td>
+                  <td><div className="cellbox"><div className="nm" style={{color:"var(--teal)"}}>{r.kaavio} p</div></div></td>
+                  <td>{(()=>{const po=koTeamOut(koBracket,r.p.player&&r.p.player.country);return <div className={"cellbox"+(po?" out":"")}><div className="nm">{r.p.player&&r.p.player.country?<span className="flag">{flag(r.p.player.country)}</span>:null}{(r.p.player&&r.p.player.name)||"—"}</div><div className="pts">{signp(r.pelaaja)} p{po?" · tippunut":""}</div></div>;})()}</td>
+                  <td>{(()=>{const co=koTeamOut(koBracket,r.champTeam);return <div className={"cellbox"+(co?" out":"")}><div className="nm" style={!co&&r.champTeam?{color:"var(--amb)"}:null}>{r.champTeam?<span className="flag">{flag(r.champTeam)}</span>:null}{r.champTeam||"—"}{r.champTeam?<span className="x2">×2</span>:null}</div><div className="pts">{r.champTeam?(r.mestari+" p"):"0 p"}{co?" · tippunut":""}</div></div>;})()}</td>
+                </tr>
+              );})}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="lb-cards">
+          {rows.map((r,i)=>{ const m=mcls(prizes[i].rank); const co=koTeamOut(koBracket,r.champTeam); const po=koTeamOut(koBracket,r.p.player&&r.p.player.country); return (
+            <div key={r.id} className={"pcard"+(i===0?" top":"")} onClick={()=>setDetail(r.id)} style={{cursor:"pointer"}}>
+              {i===0&&<div className="bar"/>}
+              <div className="chd">
+                <span className={"rank"+(i===0?" gold":"")}>{prizes[i].rank}</span>
+                <span className="cflag" style={co?{opacity:.4,filter:"grayscale(1)"}:null}>{flag(r.champTeam)}</span>
+                <div className="nmcol"><span className="cname">{r.p.name||r.id}{m&&<span className={"medal "+m}>{prizes[i].rank}</span>}<span className="chev">{open[r.id]?"⌄":"›"}</span></span>{co&&<div className="tiny">mestari tippunut</div>}</div>
+                <div style={{textAlign:"right"}}><div className="tot" style={{fontSize:26,color:i===0?"var(--grn)":"var(--ink)"}}>{r.total}</div><div className="tiny">yhteensä</div></div>
+              </div>
+              <div className="jrow"><span className="jpill">Kaavio {r.kaavio} p</span><span className="jpill" style={{color:r.mestari?"var(--amb)":"var(--mut)"}}>Mestari ×2 · {r.mestari} p</span><span className="jpill" style={{color:"var(--teal)"}}>Pelaaja {r.pelaaja} p</span></div>
+              {open[r.id]&&<div style={{marginTop:10,borderTop:"1px solid var(--line)",paddingTop:8}}>
+                {r.p.player&&r.p.player.name&&<div className="tiny">Pelaaja: <span className="flag" style={po?{opacity:.4,filter:"grayscale(1)"}:null}>{flag(r.p.player.country)}</span>{r.p.player.name} ({r.p.player.pos}){po?" · tippunut":""}</div>}
+                {r.champTeam&&<div className="tiny">Oma mestari: <span className="flag" style={co?{opacity:.4,filter:"grayscale(1)"}:null}>{flag(r.champTeam)}</span>{r.champTeam}{co?" · tippunut":""}</div>}
+              </div>}
+            </div>
+          );})}
+        </div>
+      </Fragment>}
+
+      {locked&&count===0&&null}
+    </div>
+  );
+}
+
+/* ========== PUDOTUSPELIPUU (Kaavio-välilehti) ========== */
+function KOKortti({r,koBracket,koPlayerstats,onBack}){
+  const p=r.p||{}; const co=koTeamOut(koBracket,r.champTeam); const po=koTeamOut(koBracket,p.player&&p.player.country);
+  const treeBracket={teams:(koBracket&&koBracket.teams)||[],winners:(p.bracket||{})};
+  const chip=(label,val,color)=><span className="tiny" style={{border:"1px solid var(--line)",borderRadius:13,padding:"5px 10px",color:color||"var(--ink)"}}>{label} {val}</span>;
+  return (<div>
+    <div className="card">
+      <button className="ghost" onClick={onBack}>‹ Tulostaulukko</button>
+      <div className="row between wrapf" style={{marginTop:10}}>
+        <h2 style={{fontSize:26}}>{p.name||r.id}</h2>
+        <div style={{textAlign:"right"}}><div className="tot" style={{fontSize:28,color:"var(--grn)"}}>{r.total}</div><div className="tiny">yhteensä</div></div>
+      </div>
+      <div className="row wrapf" style={{gap:8,marginTop:6}}>
+        {chip("Kaavio",r.kaavio+" p","var(--teal)")}
+        {chip("Mestari ×2",r.mestari+" p","var(--amb)")}
+        {chip("Pelaaja",signp(r.pelaaja)+" p","var(--ink)")}
+      </div>
+      <div className="divider"/>
+      <div className="row wrapf" style={{gap:22}}>
+        <div>
+          <div className="lab">Oma mestari</div>
+          <div className={"prow"+(co?" out":"")}><span style={{fontWeight:700,color:!co&&r.champTeam?"var(--amb)":null}}>{r.champTeam?<span className="flag" style={co?{opacity:.4,filter:"grayscale(1)"}:null}>{flag(r.champTeam)}</span>:null}{r.champTeam||"—"}</span>{r.champTeam?<span className="x2">×2</span>:null}<span className="tiny" style={{marginLeft:8}}>{r.champTeam?(r.mestari+" p"):""}{co?" · tippunut":""}</span></div>
+        </div>
+        <div>
+          <div className="lab">Pelaaja</div>
+          <div className={"prow"+(po?" out":"")}><span style={{fontWeight:700}}>{p.player&&p.player.country?<span className="flag" style={po?{opacity:.4,filter:"grayscale(1)"}:null}>{flag(p.player.country)}</span>:null}{(p.player&&p.player.name)||"—"}</span>{p.player&&p.player.pos?<span className="tiny" style={{marginLeft:6}}>({p.player.pos})</span>:null}<span className="tiny" style={{marginLeft:8}}>{signp(r.pelaaja)} p{po?" · tippunut":""}</span></div>
+        </div>
+      </div>
+    </div>
+    <div className="card">
+      <div className="lab" style={{color:"var(--blue2)"}}>{(p.name||r.id)} — kaavio</div>
+      <p className="tiny" style={{margin:"4px 0 8px"}}>Pelaajan oma veikkaus: vihreällä korostetut ovat hänen jatkoonmenijänsä.</p>
+      <KOTree koBracket={treeBracket}/>
+    </div>
+  </div>);
+}
+
+function KOTree({koBracket,koPreds,koConfig}){
+  const B=koBracket||{}; const teams=B.teams||[];
+  const [sel,setSel]=useState("");
+  const locked=!!(koConfig&&koConfig.locked);
+  const names=koPreds?Object.keys(koPreds).sort((a,b)=>String(koPreds[a].name||a).localeCompare(String(koPreds[b].name||b))):[];
+  const useP=sel&&koPreds&&koPreds[sel];
+  const W=useP?(koPreds[sel].bracket||{}):(B.winners||{});
+  if(!koReadyTeams(teams)) return <div className="card"><div className="note">Kaavio näkyy kun pudotuspelit alkavat ja kaikki 16 R32-ottelua on syötetty (lohkojen jälkeen).</div></div>;
+  const H=1024;
+  const cols=[{key:"R32",title:"Round 32"},{key:"R16",title:"Round 16"},{key:"QF",title:"Puolivälierät"},{key:"SF",title:"Välierät"},{key:"FIN",title:"Finaali"}];
+  const trow=(t,win,dim)=> t
+    ? <div className={"kt-trow"+(win?" kt-win":"")+(dim?" kt-dim":"")}>{flag(t)}<span className="kt-nm">{t}</span></div>
+    : <div className="kt-trow kt-ph"><span className="kt-fl"/><span className="kt-nm">?</span></div>;
+  return (<div>
+    {locked&&names.length>0&&<div className="card" style={{marginBottom:10}}>
+      <span className="tiny" style={{marginRight:8}}>Kenen kaavio:</span>
+      <select value={sel} onChange={e=>setSel(e.target.value)} style={{maxWidth:280}}>
+        <option value="">Tulokset (toteutunut)</option>
+        {names.map(id=><option key={id} value={id}>{koPreds[id].name||id}</option>)}
+      </select>
+      {useP?<span className="tiny" style={{marginLeft:10,color:"var(--blue2)"}}>{(koPreds[sel].name||sel)}:n veikkaus — vihreällä jatkoonmenijät</span>:null}
+    </div>}
+    <div className="kt-scroll"><div className="kt-bracket">
+      {cols.map((c,ci)=>{ const order=KO_TREE[c.key]; const slot=H/order.length; const isFirst=ci===0; const isLast=ci===cols.length-1;
+        return <div className="kt-col" key={c.key}><div className="kt-head">{c.title}</div>
+          <div className="kt-round" style={{height:H}}>
+            {order.map((sl,mi)=>{ const [a,b]=koTeamsFromW(teams,W,c.key,sl); const win=koGet(W,c.key,sl); const dec=!!win;
+              return <div className="kt-match" style={{"--slot":slot+"px"}} key={mi}>
+                <div className="kt-box">{trow(a,dec&&win===a,dec&&win!==a)}{trow(b,dec&&win===b,dec&&win!==b)}</div>
+                {!isLast&&<i className="kt-stub-r"/>}
+                {!isFirst&&<i className="kt-stub-l"/>}
+                {!isLast&&mi%2===0&&<i className="kt-vline"/>}
+              </div>;
+            })}
+          </div>
+        </div>;
+      })}
+    </div></div>
+    {(()=>{ const [a,b]=koTeamsFromW(teams,W,"BR",0); const win=koGet(W,"BR",0); const dec=!!win;
+      return <div className="card kt-bronze"><div className="kt-head" style={{textAlign:"left",color:"#c9803f"}}>Pronssiottelu</div>
+        <div className="kt-box" style={{width:200}}>{trow(a,dec&&win===a,dec&&win!==a)}{trow(b,dec&&win===b,dec&&win!==b)}</div></div>;
+    })()}
+  </div>);
+}
+
+/* ========== JÄRJESTÄJÄN PUDOTUSPELIOSIO ========== */
+function KOAdmin({koBracket,koConfig,koPreds,koPlayerstats,mainPin}){
+  const [ok,setOk]=useState(!mainPin);
+  const [pin,setPin]=useState("");
+  const B=koBracket||{}; const teams=(B.teams||[]); const W=(B.winners||{});
+  const locked=!!(koConfig&&koConfig.locked);
+  const stake=(koConfig&&koConfig.stake!=null)?koConfig.stake:5;
+
+  // paikallinen muokattava parilista
+  const [draftTeams,setDraftTeams]=useState(null);
+  const tlist = draftTeams || (teams.length===16?teams:Array.from({length:16},(_,i)=>teams[i]||{a:"",b:""}));
+
+  if(!ok) return (
+    <div className="card">
+      <div className="lab" style={{color:"var(--blue2)"}}>Pudotuspelit — järjestäjä</div>
+      <h2 style={{fontSize:20,margin:"6px 0 10px"}}>Syötä PIN</h2>
+      <div className="row wrapf"><input type="password" value={pin} onChange={e=>setPin(e.target.value)} placeholder="PIN"/>
+        <button className="act" onClick={()=>setOk(pin===mainPin)}>Avaa</button></div>
+      {pin&&pin!==mainPin&&<div className="note warn">Väärä PIN.</div>}
+    </div>
+  );
+
+  const saveTeams=async()=>{
+    const clean=tlist.map(p=>({a:p.a||"",b:p.b||""}));
+    const hadWins=KO_ORDER.some(r=>W[r]&&Object.keys(W[r]).length);
+    if(hadWins && !window.confirm("Parien tallennus tyhjentää jo merkityt voittajat. Jatketaanko?")) return;
+    try{ await koDoc("bracket").set({teams:clean,winners:hadWins?{}:W}); setDraftTeams(null); toast("Parit tallennettu ✔"); }
+    catch(e){ toast("Virhe: "+e.message,"err"); }
+  };
+  const setTeam=(i,slot,val)=>{ setDraftTeams(prev=>{ const base=prev||tlist.map(p=>({a:p.a,b:p.b})); const n=base.map(p=>({a:p.a,b:p.b})); n[i][slot]=val; return n; }); };
+
+  const markWinner=async(round,i,team)=>{
+    let w={...W}; KO_ORDER.forEach(r=>{ w[r]={...(W[r]||{})}; });
+    w[round]={...(w[round]||{}),[i]:team}; w=koClearDownstream(w,round);
+    try{ await koDoc("bracket").set({teams:teams.length===16?teams:tlist,winners:w}); }
+    catch(e){ toast("Virhe: "+e.message,"err"); }
+  };
+  const clearWins=async()=>{ if(!window.confirm("Tyhjennetäänkö kaikki merkityt voittajat? Joukkueet säilyvät.")) return;
+    try{ await koDoc("bracket").set({teams:teams.length===16?teams:tlist,winners:{}}); toast("Tulokset nollattu ✔"); }
+    catch(e){ toast("Virhe: "+e.message,"err"); } };
+
+  const toggleLock=async()=>{ try{ await koDoc("config").set({locked:!locked,stake},{merge:true}); toast(locked?"Avattu":"Pudotuspelit lukittu ✔"); }catch(e){ toast("Virhe: "+e.message,"err"); } };
+  const setStake=async(v)=>{ try{ await koDoc("config").set({locked,stake:+v||0},{merge:true}); }catch(e){} };
+
+  // valitut pelaajat (uniikit) tilastoja varten
+  const selPlayers=[]; const seen={};
+  Object.keys(koPreds).forEach(id=>{ const pl=koPreds[id].player; if(pl&&pl.name){ const k=pkey(pl.name,pl.country); if(!seen[k]){ seen[k]=true; selPlayers.push({name:pl.name,country:pl.country,pos:pl.pos,key:k}); } } });
+  const [statDraft,setStatDraft]=useState({});
+  const sval=(k,f)=>{ const d=statDraft[k]; if(d&&d[f]!=null) return d[f]; const t=koPlayerstats[k]||{}; return t[f]!=null?t[f]:0; };
+  const setStat=(k,f,v)=>{ if(!/^[0-9]{0,2}$/.test(v))return; setStatDraft(s=>({...s,[k]:{...(s[k]||{}),[f]:v}})); };
+  const saveStats=async()=>{
+    const map={...koPlayerstats};
+    selPlayers.forEach(p=>{ map[p.key]={cs:+sval(p.key,"cs")||0,goal:+sval(p.key,"goal")||0,assist:+sval(p.key,"assist")||0,red:+sval(p.key,"red")||0,og:+sval(p.key,"og")||0}; });
+    try{ await koDoc("playerstats").set({map}); setStatDraft({}); toast("Pelaajatilastot tallennettu ✔"); }
+    catch(e){ toast("Virhe: "+e.message,"err"); }
+  };
+
+  const setMaksu=async(id,val)=>{ try{ await db.collection("kopredictions").doc(id).set({maksettu:val},{merge:true}); }catch(e){ toast("Virhe","err"); } };
+  const resetPin=async(id)=>{ if(!window.confirm("Nollataanko tämän pelaajan pudotuspeli-PIN? (Koskee vain pudotuspelidataa.)")) return;
+    try{ await db.collection("kopredictions").doc(id).set({pin:""},{merge:true}); toast("PIN nollattu (vain pudotuspelit)"); }catch(e){ toast("Virhe","err"); } };
+
+  return (
+    <div className="card" style={{borderColor:"#2b3a7a"}}>
+      <h2 style={{fontSize:22,margin:"0 0 6px"}}>Pudotuspelit — järjestäjä</h2>
+      <div className="note warn" style={{borderColor:"var(--amb2)"}}>🛡️ Kaikki täällä koskee vain erillistä pudotuspelidataa (kokoelmat <b>ko</b> / <b>kopredictions</b>). Pääveikkaus on eri kokoelmissa eikä voi vaarantua.</div>
+
+      <div className="section-h" style={{cursor:"default"}}><span>1 · Joukkueet (syötä kerran)</span></div>
+      <p className="tiny" style={{margin:"0 0 8px"}}>Syötä 16 R32-ottelun joukkueet lohkojen jälkeen. Rivit ovat oikeassa kaaviojärjestyksessä — katso virallisesta otteluohjelmasta ottelunumeron mukaan. (1X = lohkon X voittaja · 2X = lohkon X kakkonen · 3 = paras kolmossija näistä lohkoista.)</p>
+      {tlist.map((p,i)=>(
+        <div key={i} style={{marginBottom:8}}>
+          <div className="tiny" style={{fontWeight:800,color:"var(--blue2)",margin:"2px 0"}}>Ottelu {KO_R32_LABELS[i]} <span style={{color:"var(--mut)"}}>· {KO_R32_DESC[i]}</span></div>
+          <div className="kmatch">
+            <div><select value={p.a||""} onChange={e=>setTeam(i,"a",e.target.value)}><option value="">— joukkue —</option>{ALL_TEAMS.map(t=><option key={t} value={t}>{t}</option>)}</select></div>
+            <div className="kvs">VS</div>
+            <div><select value={p.b||""} onChange={e=>setTeam(i,"b",e.target.value)}><option value="">— joukkue —</option>{ALL_TEAMS.map(t=><option key={t} value={t}>{t}</option>)}</select></div>
+          </div>
+        </div>
+      ))}
+      <div className="row wrapf" style={{marginTop:10,gap:8}}><button className="act" onClick={saveTeams}>Tallenna parit</button><button className="ghost" onClick={()=>setDraftTeams(KO_TESTIPARIT.map(p=>({a:p.a,b:p.b})))}>🧪 Täytä testijoukkueet</button></div>
+
+      <div className="divider"/>
+      <div className="section-h" style={{cursor:"default"}}><span>2 · Merkitse voittajat</span>{koReadyTeams(teams)&&KO_ORDER.some(r=>W[r]&&Object.keys(W[r]).length)?<button className="ghost" onClick={clearWins} style={{padding:"4px 10px",fontSize:12}}>🧹 Nollaa tulokset</button>:null}</div>
+      {!koReadyTeams(teams)
+        ? <div className="note">Syötä ja tallenna ensin kaikki 16 paria, niin voittajien merkintä avautuu.</div>
+        : KO_ROUNDS.map(meta=>(
+          <div className="koround" key={meta.key}>
+            <div className="lab" style={{color:meta.key==="FIN"?"var(--amb)":"var(--blue2)"}}>{meta.title}</div>
+            {Array.from({length:meta.n}).map((_,i)=>{ const [a,b]=koTeamsFromW(teams,W,meta.key,i); const sel=koGet(W,meta.key,i);
+              return <div className="kmatch" key={i}>
+                <KoBtn team={a} on={!!a&&sel===a} disabled={!a} onClick={()=>markWinner(meta.key,i,a)}/>
+                <div className="kvs"><div className="matchno">O{koMatchNo(meta.key,i)}</div>VS</div>
+                <KoBtn team={b} on={!!b&&sel===b} disabled={!b} onClick={()=>markWinner(meta.key,i,b)}/>
+              </div>;
+            })}
+          </div>
+        ))}
+
+      <div className="divider"/>
+      <div className="section-h" style={{cursor:"default"}}><span>3 · Pelaajatilastot (vain valitut)</span></div>
+      {selPlayers.length===0
+        ? <div className="note">Ei valittuja pelaajia vielä.</div>
+        : <Fragment>
+            <div className="statline head"><span>Pelaaja</span><span>0-peli</span><span>Maali</span><span>Syöttö</span><span>Pun.</span><span>OM.</span></div>
+            {selPlayers.map(p=>(
+              <div className="statline" key={p.key}>
+                <span><span className="flag">{flag(p.country)}</span>{p.name} <span className="tiny">({p.pos})</span></span>
+                {["cs","goal","assist","red","og"].map(f=><input key={f} inputMode="numeric" value={sval(p.key,f)} onChange={e=>setStat(p.key,f,e.target.value)}/>)}
+              </div>
+            ))}
+            <div className="row" style={{marginTop:10}}><button className="act" onClick={saveStats}>Tallenna tilastot</button></div>
+          </Fragment>}
+
+      <div className="divider"/>
+      <div className="section-h" style={{cursor:"default"}}><span>4 · Osallistujat, maksut & PIN</span></div>
+      {Object.keys(koPreds).length===0
+        ? <div className="note">Ei pudotuspeliveikkauksia vielä.</div>
+        : Object.keys(koPreds).sort((a,b)=>(koPreds[a].name||a).localeCompare(koPreds[b].name||b,"fi")).map(id=>(
+          <div className="row between wrapf" key={id} style={{padding:"9px 0",borderBottom:"1px dashed var(--line)",gap:10}}>
+            <b>{koPreds[id].name||id}</b>
+            <div className="row" style={{gap:10}}>
+              <label className="row" style={{gap:6,cursor:"pointer"}}><input type="checkbox" checked={!!koPreds[id].maksettu} onChange={e=>setMaksu(id,e.target.checked)} style={{width:18,height:18}}/><span className="tiny">maksettu</span></label>
+              <button className="ghost" onClick={()=>resetPin(id)}>Nollaa PIN</button>
+            </div>
+          </div>
+        ))}
+
+      <div className="divider"/>
+      <div className="row between wrapf">
+        <div><div className="lab">Panostus & lukitus</div>
+          <div className="row wrapf" style={{gap:8,marginTop:6}}><span className="tiny">Panos €:</span><input style={{width:80}} inputMode="numeric" defaultValue={stake} onBlur={e=>setStake(e.target.value)}/></div>
+        </div>
+        <button className={locked?"ghost":"act"} onClick={toggleLock}>{locked?"Avaa pudotuspelit":"Lukitse pudotuspelit"}</button>
+      </div>
+    </div>
+  );
+}
+
 function App(){
+
   const [tab,setTab]=useState("veikkaus");
   const [detail,setDetail]=useState(null);
   const [matches,setMatches]=useState(null);
@@ -410,6 +1111,10 @@ function App(){
   const [playerstats,setPlayerstats]=useState({});
   const [preds,setPreds]=useState({});
   const [err,setErr]=useState("");
+  const [koBracket,setKoBracket]=useState(null);
+  const [koConfig,setKoConfig]=useState({locked:false,stake:5});
+  const [koPlayerstats,setKoPlayerstats]=useState({});
+  const [koPreds,setKoPreds]=useState({});
 
   useEffect(()=>{
     if(!cfgOk) return;
@@ -431,6 +1136,17 @@ function App(){
     subs.push(docRef("teamstats").onSnapshot(d=>{ setTeamstats(d.exists?(d.data().map||{}):{}); }));
     subs.push(docRef("playerstats").onSnapshot(d=>{ setPlayerstats(d.exists?(d.data().map||{}):{}); }));
     subs.push(db.collection("predictions").onSnapshot(s=>{ const o={}; s.forEach(x=>o[x.id]=x.data()); setPreds(o); },e=>setErr(e.message)));
+    return ()=>subs.forEach(u=>u&&u());
+  },[]);
+
+  // Pudotuspelit — erilliset kokoelmat (ei kosketa pääpelin dataa)
+  useEffect(()=>{
+    if(!cfgOk) return;
+    const subs=[];
+    subs.push(koDoc("bracket").onSnapshot(d=>{ setKoBracket(d.exists?{teams:[],winners:{},...d.data()}:{teams:[],winners:{}}); },()=>{}));
+    subs.push(koDoc("config").onSnapshot(d=>{ setKoConfig({locked:false,stake:5,...(d.exists?d.data():{})}); },()=>{}));
+    subs.push(koDoc("playerstats").onSnapshot(d=>{ setKoPlayerstats(d.exists?(d.data().map||{}):{}); },()=>{}));
+    subs.push(db.collection("kopredictions").onSnapshot(s=>{ const o={}; s.forEach(x=>o[x.id]=x.data()); setKoPreds(o); },()=>{}));
     return ()=>subs.forEach(u=>u&&u());
   },[]);
 
@@ -463,12 +1179,13 @@ function App(){
           <Countdown/>
         </div>
       </header>
+      <div className="note" style={{borderColor:"#a9851a",color:"#ffcf3f",background:"rgba(255,207,63,.08)",textAlign:"center",fontWeight:800,letterSpacing:".04em"}}>🧪 TESTIVERSIO — ei oikea veikkaus (testitietokanta)</div>
       <nav className="tabs">
-        {[["veikkaus","Oma veikkaus"],["karki","Tulostaulukko"],["ottelut","Ottelut"],["saannot","Säännöt"],["jarjestaja","Järjestäjä"]].map(([k,l])=>
+        {[["veikkaus","Oma veikkaus"],["karki","Tulostaulukko"],["ko","Pudotuspelit"],["kaavio","Kaavio"],["ottelut","Ottelut"],["saannot","Säännöt"],["jarjestaja","Järjestäjä"]].map(([k,l])=>
           <button key={k} className={"tab"+(tab===k?" on":"")} onClick={()=>setTab(k)}>{l}</button>)}
       </nav>
       {err&&<div className="note err">Tietokantavirhe: {err} — tarkista Firestore-säännöt (README vaihe 4).</div>}
-      {tab==="veikkaus"&&<Veikkaus matches={matches} preds={preds} config={config} playerstats={playerstats}/>}
+      {tab==="veikkaus"&&<Fragment><Veikkaus matches={matches} preds={preds} config={config} playerstats={playerstats}/><KOVeikkaus koBracket={koBracket} koConfig={koConfig} koPreds={koPreds} koPlayerstats={koPlayerstats}/></Fragment>}
       {tab==="karki"&&(detail&&preds[detail]
         ? <Kortti p={preds[detail]} sc={scores[detail]} matches={matches} teamstats={teamstats} playerstats={playerstats} onBack={()=>setDetail(null)}/>
         : <Fragment>
@@ -477,9 +1194,11 @@ function App(){
             {config.locked&&<Porssi preds={preds} playerstats={playerstats}/>}
             <Karki preds={preds} scores={scores} matches={matches} playerstats={playerstats} teamstats={teamstats} locked={config.locked} onOpen={id=>setDetail(id)} stake={config.stake||10}/>
           </Fragment>)}
+      {tab==="ko"&&<KO koBracket={koBracket} koConfig={koConfig} koPreds={koPreds} koPlayerstats={koPlayerstats}/>}
+      {tab==="kaavio"&&<KOTree koBracket={koBracket} koPreds={koPreds} koConfig={koConfig}/>}
       {tab==="ottelut"&&<Ottelut matches={matches} preds={preds} locked={config.locked}/>}
       {tab==="saannot"&&<Saannot stake={config.stake!=null?config.stake:10}/>}
-      {tab==="jarjestaja"&&<Admin matches={matches} preds={preds} config={config} teamstats={teamstats} playerstats={playerstats}/>}
+      {tab==="jarjestaja"&&<Fragment><Admin matches={matches} preds={preds} config={config} teamstats={teamstats} playerstats={playerstats}/><KOAdmin koBracket={koBracket} koConfig={koConfig} koPreds={koPreds} koPlayerstats={koPlayerstats} mainPin={config.pin}/></Fragment>}
       <p className="tiny" style={{marginTop:28,textAlign:"center"}}>
         Tarkemmat säännöt ja pisteytys löydät <b style={{color:"var(--blue2)"}}>Säännöt</b>-välilehdeltä.
       </p>
@@ -1024,6 +1743,20 @@ function Saannot({stake}){
       <div className="card">
         <div className="lab" style={{color:"var(--blue2)"}}>Lukitus ja yksityisyys</div>
         <p style={{margin:"6px 0 0"}}>Veikkaukset lukitaan 11.6.2026 klo 21.00 Suomen aikaa, tunti ennen avausottelua (Meksiko–Etelä-Afrikka klo 22.00). Lukituksen jälkeen valintoja ei voi enää muuttaa, ja kaikkien valinnat tulevat näkyviin. Voit suojata oman veikkauksesi PIN-koodilla. Ennen lukitusta muiden pelaaja- ja maavalinnat sekä otteluveikkaukset ovat piilossa, jottei niitä voi kopioida.</p>
+      </div>
+
+      <div className="card" style={{borderColor:"#2b3a7a"}}>
+        <div className="lab" style={{color:"var(--blue2)"}}>★ Pudotuspeliveikkaus — erillinen minipeli</div>
+        <p style={{margin:"6px 0 8px"}}>Pudotuspeleihin on oma, vapaaehtoinen veikkaus omalla 5 €:n potillaan ja omalla PIN-koodilla. Se on täysin erillinen pääpelistä eikä vaikuta sen pisteisiin millään tavalla. Kaavio avautuu, kun alkulohkot on pelattu.</p>
+        <p className="tiny" style={{margin:"8px 0 4px",fontWeight:700}}>Kaaviopisteet (per oikein veikattu jatkoonmenijä)</p>
+        <div className="row wrapf" style={{gap:"8px 14px",margin:"4px 0"}}>
+          {[["1 p","Round 32"],["3 p","Round 16"],["6 p","puolivälierät"],["8 p","välierät"],["5 p","pronssi"],["10 p","mestaruus"]].map(([p,d],i)=>
+            <span key={i} className="row" style={{gap:6}}><span className="pill g" style={{minWidth:30,textAlign:"center"}}>{p}</span><span style={{fontSize:13}}>{d}</span></span>)}
+        </div>
+        <p className="tiny" style={{margin:"8px 0 0"}}><b>Oma mestari:</b> finaaliin veikkaamasi joukkue on oma mestarisi. Sen tuomat pisteet tuplataan jokaisella kierroksella, jonka se etenee oikein.</p>
+        <p className="tiny" style={{margin:"6px 0 0"}}><b>Pelaaja:</b> valitse yksi pelaaja mistä tahansa maasta. Pisteet lasketaan samalla tavalla kuin pääpelissä (pelipaikan mukaan), mutta vain pudotuspelien tilastoista.</p>
+        <p className="tiny" style={{margin:"6px 0 0"}}><b>Potti:</b> vapaaehtoinen 5 €. Jako 1. sija 60 %, 2. sija 30 %, 3. sija 10 %. Tasatilanteessa kyseisten sijojen palkinnot jaetaan tasan.</p>
+        <p className="tiny" style={{margin:"6px 0 0"}}><b>PIN:</b> pudotuspeliveikkauksella on oma, pääpelistä erillinen PIN-koodi.</p>
       </div>
     </div>
   );
